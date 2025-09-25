@@ -1,0 +1,308 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+  
+  /* CSS Custom Properties for consistent theming */
+  --primary-color: #2563eb;
+  --secondary-color: #7c3aed;
+  --success-color: #059669;
+  --error-color: #dc2626;
+  --warning-color: #d97706;
+  --info-color: #0284c7;
+  
+  /* Spacing scale */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  
+  /* Border radius scale */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  
+  /* Improved font rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  
+  /* Better scrolling on iOS */
+  -webkit-overflow-scrolling: touch;
+  
+  /* Support for safe areas on mobile */
+  --safe-area-inset-top: env(safe-area-inset-top);
+  --safe-area-inset-right: env(safe-area-inset-right);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom);
+  --safe-area-inset-left: env(safe-area-inset-left);
+  
+  /* Dark theme specific colors to match current UI */
+  --dark-bg-primary: #1a202c;
+  --dark-bg-secondary: #2d3748;
+  --dark-text-primary: #f7fafc;
+  --dark-text-secondary: #a0aec0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  /* Prevent zoom on iOS when focusing inputs */
+  -webkit-text-size-adjust: 100%;
+  /* Improve touch scrolling */
+  -webkit-overflow-scrolling: touch;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  min-height: 100dvh; /* Dynamic viewport height for mobile */
+  overflow-x: hidden;
+  /* Prevent pull-to-refresh on mobile */
+  overscroll-behavior-y: contain;
+}
+
+/* Improved scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Better focus outlines for accessibility */
+*:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+/* Smooth transitions for theme switching */
+* {
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+/* Mobile-first responsive improvements */
+@media (max-width: 640px) {
+  /* Increase touch targets for better accessibility */
+  button, 
+  .MuiButton-root,
+  .MuiIconButton-root,
+  .MuiTab-root {
+    min-height: 48px;
+    min-width: 48px;
+  }
+  
+  /* Better spacing on mobile */
+  .MuiContainer-root {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  
+  /* Improve form inputs on mobile */
+  input, 
+  textarea, 
+  select,
+  .MuiOutlinedInput-root {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  /* Better modal spacing */
+  .MuiDialog-paper {
+    margin: 8px;
+    max-height: calc(100% - 16px);
+  }
+  
+  /* Improve table responsiveness */
+  .MuiTable-root {
+    font-size: 0.875rem;
+  }
+  
+  .MuiTableCell-root {
+    padding: 8px;
+  }
+}
+
+/* Tablet optimizations */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .MuiContainer-root {
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+  }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .MuiButton-outlined,
+  .MuiTextField-root .MuiOutlinedInput-notchedOutline {
+    border-width: 2px;
+  }
+}
+
+/* Custom utility classes */
+.mobile-hidden {
+  display: block;
+}
+
+.mobile-only {
+  display: none;
+}
+
+.tablet-hidden {
+  display: block;
+}
+
+.tablet-only {
+  display: none;
+}
+
+.desktop-hidden {
+  display: block;
+}
+
+.desktop-only {
+  display: none;
+}
+
+/* Mobile breakpoint */
+@media (max-width: 640px) {
+  .mobile-hidden {
+    display: none;
+  }
+  
+  .mobile-only {
+    display: block;
+  }
+}
+
+/* Tablet breakpoint */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .tablet-hidden {
+    display: none;
+  }
+  
+  .tablet-only {
+    display: block;
+  }
+}
+
+/* Desktop breakpoint */
+@media (min-width: 1025px) {
+  .desktop-hidden {
+    display: none;
+  }
+  
+  .desktop-only {
+    display: block;
+  }
+}
+
+/* Loading animations */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.loading-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.loading-shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Safe area support for mobile devices */
+.safe-area-top {
+  padding-top: var(--safe-area-inset-top);
+}
+
+.safe-area-bottom {
+  padding-bottom: var(--safe-area-inset-bottom);
+}
+
+.safe-area-left {
+  padding-left: var(--safe-area-inset-left);
+}
+
+.safe-area-right {
+  padding-right: var(--safe-area-inset-right);
+}
+
+/* Focus improvements for accessibility */
+.focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .MuiButton-root,
+  .MuiIconButton-root {
+    color: #000 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+}

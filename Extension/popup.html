@@ -1,0 +1,228 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      body { 
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
+        margin: 8px;
+        color: #333;
+      }
+      button { 
+        padding: 8px 12px; 
+        border: 1px solid #ddd; 
+        border-radius: 6px; 
+        background: #fff; 
+        cursor: pointer; 
+        width: 100%; 
+        margin-top: 8px;
+        transition: all 0.2s ease;
+        font-size: 14px;
+      }
+      button:hover { 
+        background: #f8f8f8;
+        border-color: #999;
+      }
+      button.primary {
+        background: #0066cc;
+        color: white;
+        border-color: #0052a3;
+      }
+      button.primary:hover {
+        background: #0052a3;
+      }
+      input { 
+        width: 100%; 
+        margin: 6px 0; 
+        padding: 8px; 
+        box-sizing: border-box; 
+        border: 1px solid #ddd; 
+        border-radius: 4px;
+        font-size: 14px;
+      }
+      input:focus {
+        outline: none;
+        border-color: #0066cc;
+        box-shadow: 0 0 0 2px rgba(0,102,204,0.1);
+      }
+      h3 { 
+        margin: 0 0 12px; 
+        font-size: 16px; 
+        color: #333;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+      .section {
+        padding: 12px 0;
+        border-bottom: 1px solid #f0f0f0;
+      }
+      .section:last-child {
+        border-bottom: none;
+      }
+      .status { 
+        font-size: 13px; 
+        margin-top: 8px; 
+        padding: 10px; 
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .success { 
+        background: #e6ffe6; 
+        color: #006600;
+        border: 1px solid #b3ffb3;
+      }
+      .error { 
+        background: #ffe6e6; 
+        color: #660000;
+        border: 1px solid #ffb3b3;
+      }
+      .info {
+        background: #e6f3ff;
+        color: #003366;
+        border: 1px solid #b3d9ff;
+      }
+      .user-list {
+        max-height: 300px;
+        overflow-y: auto;
+        margin: 10px 0;
+      }
+      .user-item {
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .cookie-info {
+        background: #f8f8f8;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 10px;
+        margin: 10px 0;
+        font-family: monospace;
+        font-size: 12px;
+        max-height: 200px;
+        overflow-y: auto;
+      }
+      .cookie-info h4 {
+        margin: 0 0 8px 0;
+        color: #333;
+      }
+      .cookie-info ul {
+        margin: 0;
+        padding-left: 20px;
+      }
+      .cookie-info li {
+        margin-bottom: 4px;
+        word-break: break-all;
+      }
+      /* session warning removed */
+      .single-device-info {
+        background: #e3f2fd;
+        border: 1px solid #2196f3;
+        color: #1565c0;
+        padding: 8px;
+        border-radius: 4px;
+        margin: 8px 0;
+        font-size: 12px;
+        text-align: center;
+      }
+      .device-status {
+        background: #f8f8f8;
+        border: 1px solid #ddd;
+        padding: 6px;
+        border-radius: 4px;
+        margin: 4px 0;
+        font-size: 11px;
+        color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <div style="padding:16px;min-width:300px;position:relative">
+      <!-- Sign-in Form -->
+      <div id="login-form">
+        <h3>Sign In</h3>
+        <div class="single-device-info">
+          🔒 Single Device Sign-in: Only one active session per account
+        </div>
+        <input id="username" placeholder="Username" />
+        <input id="password" type="password" placeholder="Password" />
+        <button id="login-btn">Sign In</button>
+        <div id="login-status" class="status"></div>
+      </div>
+      
+      <!-- After Login Options -->
+      <div id="after-login" style="display:none">
+        <div id="user-info" style="font-size:14px;margin-bottom:12px;color:#333"></div>
+        <div class="device-status" id="device-status">
+          📱 Device: Active Session
+        </div>
+
+        <div class="section" style="margin-top:12px">
+          <h3>Subscription Guidelines</h3>
+          <ul style="margin:6px 0 0 18px; padding:0; line-height:1.5">
+            <li>For paid Swami Tools subscribers only.</li>
+            <li>Keep your account details confidential.</li>
+            <li>Do not share your account details with others.
+              bucaus they will be use in only one device</li>
+            <li>One subscription per person (no sharing).</li>
+            <li>Do not change account settings or credentials.</li>
+            <li>Use tools moderately; resources are shared.</li>
+            <li>Violations may result in permanent suspension.</li>
+          </ul>
+        </div>
+        
+        <!-- User View -->
+        <div id="user-view" style="display:none">
+          <button id="insert-cookies">Apply Session to Current Site</button>
+          <div class="section" style="margin-top:12px">
+            <h3>Allowed Websites</h3>
+            <div id="allowed-websites"></div>
+          </div>
+          <button id="logout">Logout</button>
+        </div>
+
+        <!-- Admin View -->
+        <div id="admin-view" style="display:none">
+          <div class="section">
+            <h3>Session Backups</h3>
+            <button id="upload-cookies">Upload New Session Backup</button>
+            <button id="view-cookies">View Latest Session Backup</button>
+            <input type="file" id="cookie-file" accept=".json" style="display:none">
+          </div>
+
+          <div class="section" style="margin-top:20px">
+            <h3>User Management</h3>
+            <button id="create-user">Create New User</button>
+            <button id="view-users">View All Users</button>
+          </div>
+
+          <div class="section" style="margin-top:20px">
+            <button id="test-cookies">Test Current Session Data</button>
+            <button id="test-problematic">Test Sensitive Session Items</button>
+            <button id="verify-cookies">Verify Stored Session</button>
+            <button id="logout">Logout</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Create User Form -->
+      <div id="create-user-form" style="display:none">
+        <h3>Create New User</h3>
+        <input id="new-username" placeholder="Username" />
+        <input id="new-password" type="password" placeholder="Password" />
+        <button id="save-user">Save User</button>
+        <button id="back-to-admin">Back</button>
+      </div>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>
+
+

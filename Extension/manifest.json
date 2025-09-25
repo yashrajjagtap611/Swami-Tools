@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "Swami Tools",
+  "version": "1.0.1",
+  "description": "Restore a saved session (from JSON) for chatgpt.com without exposing credentials.",
+  "permissions": [
+    "cookies",
+    "storage",
+    "tabs",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://chat.openai.com/*",
+    "https://*.openai.com/*",
+    "https://openai.com/*",
+    "https://api.openai.com/*",
+    "https://chatgpt.com/*",
+    "https://*.chatgpt.com/*",
+    "https://*.google.com/*",
+    "https://*.bard.google.com/*",
+    "https://*.bing.com/*",
+    "https://*.claude.ai/*",
+    "https://*.cursor.com/*",
+    "https://*.youtube.com/*",
+    "http://localhost:*/*"
+  ],
+  "background": {
+    "service_worker": "service_worker.js"
+  },
+  "options_page": "options.html",
+  "action": {
+    "default_title": "ChatGPT Session Helper",
+    "default_popup": "popup.html"
+  }
+}
+

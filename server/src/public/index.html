@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cookie Admin</title>
+    <style>
+      body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif;max-width:720px;margin:40px auto;padding:0 16px}
+      .card{border:1px solid #ddd;border-radius:12px;padding:16px;margin:12px 0}
+      input,button{font-size:16px;padding:8px 10px;margin:6px 0}
+      input{width:100%}
+    </style>
+  </head>
+  <body>
+    <h1>Cookie Admin</h1>
+    <div class="card">
+      <h3>Login</h3>
+      <input id="email" placeholder="email" />
+      <input id="password" type="password" placeholder="password" />
+      <button id="loginBtn">Login</button>
+      <div id="loginMsg"></div>
+    </div>
+
+    <div class="card">
+      <h3>Admin Upload</h3>
+      <input id="name" placeholder="bundle name" />
+      <input id="tags" placeholder="tags (comma separated)" />
+      <input id="file" type="file" accept="application/json" />
+      <button id="uploadBtn">Upload JSON</button>
+      <div id="uploadMsg"></div>
+    </div>
+
+    <div class="card">
+      <h3>Bundles</h3>
+      <button id="refresh">Refresh</button>
+      <pre id="list"></pre>
+    </div>
+
+    <script>
+      const api = (p) => `${location.origin}/api${p}`;
+      const tokenKey = 'token';
+      document.getElementById('loginBtn').onclick = async () => {
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const r = await fetch(api('/auth/login'), { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, password })});
+        const j = await r.json();
+        if (r.ok) { localStorage.setItem(tokenKey, j.token); document.getElementById('loginMsg').textContent = 'Logged in'; }
+        else { document.getElementById('loginMsg').textContent = j.error || 'Login failed'; }
+      };
+      document.getElementById('uploadBtn').onclick = async () => {
+        const t = localStorage.getItem(tokenKey);
+        if (!t) return alert('Login first');
+        const fd = new FormData();
+        fd.append('name', document.getElementById('name').value);
+        fd.append('tags', document.getElementById('tags').value);
+        const f = document.getElementById('file').files[0];
+        if (!f) return alert('Choose a file');
+        fd.append('file', f);
+        const r = await fetch(api('/cookies/upload'), { method:'POST', headers:{ Authorization: `Bearer ${t}` }, body: fd });
+        const j = await r.json();
+        document.getElementById('uploadMsg').textContent = r.ok ? 'Uploaded' : (j.error||'Error');
+      };
+      async function refresh() {
+        const t = localStorage.getItem(tokenKey);
+        if (!t) return;
+        const r = await fetch(api('/cookies'), { headers:{ Authorization: `Bearer ${t}` }});
+        const j = await r.json();
+        document.getElementById('list').textContent = JSON.stringify(j, null, 2);
+      }
+      document.getElementById('refresh').onclick = refresh;
+      refresh();
+    </script>
+  </body>
+  </html>
+
+
+
