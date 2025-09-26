@@ -20,12 +20,16 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    proxy: {
-      '/api': {
-        target: 'http://localhost:8080',
-        changeOrigin: true,
+    // Proxy only used in development - production uses environment variables
+    ...(process.env.NODE_ENV === 'development' && {
+      proxy: {
+        '/api': {
+          target: process.env.VITE_API_URL || 'http://localhost:8080',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, '/api'),
+        },
       },
-    },
+    }),
   },
   optimizeDeps: {
     include: ['@emotion/styled', '@mui/material/Tooltip', '@mui/material/Popper'],
