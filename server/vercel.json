@@ -2,10 +2,8 @@
   "version": 2,
   "name": "chatgpt-cookie-server",
   "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/api"
-    }
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/", "destination": "/api" }
   ],
   "env": {
     "NODE_ENV": "production"
