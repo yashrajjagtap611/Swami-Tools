@@ -10,8 +10,9 @@ import {
   CookieInsertion,
   SessionInfo
 } from '../types';
+import { config } from '../config/env';
 
-const API_URL = 'http://localhost:8080/api';
+const API_URL = config.apiUrl;
 
 // Create axios instance with default config
 const api = axios.create({
@@ -19,7 +20,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json'
   },
-  timeout: 10000
+  timeout: config.apiTimeout
 });
 
 // Request interceptor to add auth token and check session
