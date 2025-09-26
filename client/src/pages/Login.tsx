@@ -15,11 +15,7 @@ import {
   Slide,
   useTheme,
   useMediaQuery,
-  Stack,
-  Card,
-  CardContent,
-  Fade,
-  Chip
+  Stack
 } from '@mui/material';
 import {
   Visibility,
@@ -27,9 +23,7 @@ import {
   Login as LoginIcon,
   Person as PersonIcon,
   Lock as LockIcon,
-  Fingerprint as FingerprintIcon,
-  Security as SecurityIcon,
-  Cookie as CookieIcon
+  Fingerprint as FingerprintIcon
 } from '@mui/icons-material';
 import { authAPI } from '../services/api';
 

@@ -20,10 +20,6 @@ import {
   Stack,
   LinearProgress,
   Divider,
-  Button,
-  Alert,
-  Skeleton,
-  Paper
 } from '@mui/material';
 import {
   TrendingUp as TrendingUpIcon,
@@ -34,10 +30,6 @@ import {
   Refresh as RefreshIcon,
   Security as SecurityIcon,
   Schedule as ScheduleIcon,
-  Analytics as AnalyticsIcon,
-  Speed as SpeedIcon,
-  CheckCircle as CheckCircleIcon,
-  Warning as WarningIcon
 } from '@mui/icons-material';
 import { userAPI } from '../services/api';
 

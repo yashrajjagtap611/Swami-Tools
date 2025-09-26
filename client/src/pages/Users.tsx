@@ -44,11 +44,7 @@ import {
   Schedule as ScheduleIcon,
   Web as WebIcon,
   WhatsApp as WhatsAppIcon,
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  MoreVert as MoreVertIcon,
   Phone as PhoneIcon,
-  Email as EmailIcon,
   CalendarToday as CalendarIcon,
   Login as LoginIcon
 } from '@mui/icons-material';
@@ -74,7 +70,6 @@ interface User {
 const Users: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const isTablet = useMediaQuery(theme.breakpoints.down('lg'));
   
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
