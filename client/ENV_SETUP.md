@@ -29,7 +29,7 @@
 
 2. **Update with your production API URL:**
    ```bash
-   VITE_API_URL=https://your-production-server.vercel.app/api
+   VITE_API_URL=https://swami-tools-server.onrender.com/api
    ```
 
 ## Environment Variables Explained
@@ -62,6 +62,6 @@ When deploying to Vercel, set these environment variables in your Vercel dashboa
 4. Set the appropriate values for production
 
 Example:
-- `VITE_API_URL` → `https://your-server.vercel.app/api`
+- `VITE_API_URL` → `https://swami-tools-server.onrender.com/api`
 - `VITE_NODE_ENV` → `production`
 - `VITE_DEBUG` → `false`

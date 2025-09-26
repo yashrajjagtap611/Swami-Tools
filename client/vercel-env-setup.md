@@ -7,7 +7,7 @@ To fix the deployment issues, you need to set the following environment variable
 Go to your Vercel project dashboard → Settings → Environment Variables and add:
 
 ```
-VITE_API_URL=https://swami-tools-server.vercel.app/api
+VITE_API_URL=https://swami-tools-server.onrender.com/api
 VITE_API_TIMEOUT=10000
 VITE_APP_NAME=ChatGPT Manager
 VITE_APP_VERSION=1.0.0
