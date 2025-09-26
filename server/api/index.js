@@ -8,6 +8,9 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
 import rateLimit from 'express-rate-limit';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
 
 import { authRouter } from '../src/routes/auth.js';
 import { cookiesRouter } from '../src/routes/cookies.js';
@@ -83,13 +86,193 @@ if (process.env.NODE_ENV !== 'production') {
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Health check endpoint
+// Get directory path for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__dirname);
+
+// Generate status dashboard HTML
+function getStatusDashboardHTML() {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT Cookie Manager API - Status</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 20px;
+            padding: 40px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); max-width: 800px; width: 100%; text-align: center;
+        }
+        .logo {
+            width: 80px; height: 80px; background: linear-gradient(135deg, #4CAF50, #45a049);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px; font-size: 40px; color: white; animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .title { font-size: 2.5rem; font-weight: 700; color: #333; margin-bottom: 10px; }
+        .subtitle { font-size: 1.2rem; color: #666; margin-bottom: 30px; }
+        .status-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 30px 0;
+        }
+        .status-card {
+            background: white; border-radius: 15px; padding: 25px; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .status-card:hover { transform: translateY(-5px); }
+        .status-icon {
+            width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; margin: 0 auto 15px; font-size: 24px; color: white;
+        }
+        .status-icon.success { background: linear-gradient(135deg, #4CAF50, #45a049); }
+        .status-title { font-size: 1.1rem; font-weight: 600; color: #333; margin-bottom: 10px; }
+        .status-value { font-size: 0.9rem; color: #666; }
+        .endpoints { margin-top: 30px; text-align: left; }
+        .endpoints h3 { color: #333; margin-bottom: 15px; text-align: center; }
+        .endpoint-item {
+            background: #f8f9fa; border-radius: 8px; padding: 15px; margin-bottom: 10px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .endpoint-method {
+            background: #007bff; color: white; padding: 4px 8px; border-radius: 4px;
+            font-size: 0.8rem; font-weight: 600; min-width: 60px; text-align: center;
+        }
+        .endpoint-method.post { background: #28a745; }
+        .endpoint-path { flex: 1; margin: 0 15px; font-family: 'Courier New', monospace; font-size: 0.9rem; }
+        .test-button {
+            background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none;
+            padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;
+        }
+        .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; color: #666; font-size: 0.9rem; }
+        @media (max-width: 768px) {
+            .container { padding: 20px; } .title { font-size: 2rem; } .status-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🍪</div>
+            <h1 class="title">ChatGPT Cookie Manager</h1>
+            <p class="subtitle">Backend API Status Dashboard</p>
+        </div>
+
+        <div class="status-grid">
+            <div class="status-card">
+                <div class="status-icon success">✅</div>
+                <div class="status-title">API Status</div>
+                <div class="status-value">Running & Healthy</div>
+            </div>
+            <div class="status-card">
+                <div class="status-icon success">🗄️</div>
+                <div class="status-title">Database</div>
+                <div class="status-value">MongoDB Connected</div>
+            </div>
+            <div class="status-card">
+                <div class="status-icon success">🌍</div>
+                <div class="status-title">Environment</div>
+                <div class="status-value">${process.env.NODE_ENV || 'production'}</div>
+            </div>
+            <div class="status-card">
+                <div class="status-icon success">⏰</div>
+                <div class="status-title">Server Time</div>
+                <div class="status-value">${new Date().toLocaleString()}</div>
+            </div>
+        </div>
+
+        <div class="endpoints">
+            <h3>🚀 Available API Endpoints</h3>
+            <div class="endpoint-item">
+                <span class="endpoint-method">GET</span>
+                <span class="endpoint-path">/health</span>
+                <button class="test-button" onclick="testEndpoint('/health')">Test</button>
+            </div>
+            <div class="endpoint-item">
+                <span class="endpoint-method">GET</span>
+                <span class="endpoint-path">/api</span>
+                <button class="test-button" onclick="testEndpoint('/api')">Test</button>
+            </div>
+            <div class="endpoint-item">
+                <span class="endpoint-method post">POST</span>
+                <span class="endpoint-path">/api/auth/login</span>
+                <button class="test-button" onclick="alert('Authentication endpoint - requires credentials')">Info</button>
+            </div>
+            <div class="endpoint-item">
+                <span class="endpoint-method post">POST</span>
+                <span class="endpoint-path">/api/auth/register</span>
+                <button class="test-button" onclick="alert('Registration endpoint - requires username/password')">Info</button>
+            </div>
+            <div class="endpoint-item">
+                <span class="endpoint-method">GET</span>
+                <span class="endpoint-path">/api/cookies</span>
+                <button class="test-button" onclick="alert('Protected endpoint - requires authentication')">Info</button>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>🚀 <strong>Server Status:</strong> Online & Deployed on Vercel</p>
+            <p>📡 <strong>API Base URL:</strong> <code>${process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://swami-tools-server.vercel.app'}</code></p>
+            <p>⚡ <strong>Last Updated:</strong> ${new Date().toISOString()}</p>
+        </div>
+    </div>
+
+    <script>
+        async function testEndpoint(path) {
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = 'Testing...';
+            button.disabled = true;
+
+            try {
+                const response = await fetch(path);
+                const data = await response.json();
+                alert(\`✅ \${path}\\nStatus: \${response.status}\\nResponse: \${JSON.stringify(data, null, 2)}\`);
+            } catch (error) {
+                alert(\`❌ \${path}\\nError: \${error.message}\`);
+            } finally {
+                button.textContent = originalText;
+                button.disabled = false;
+            }
+        }
+
+        // Auto-refresh every 30 seconds
+        setTimeout(() => window.location.reload(), 30000);
+    </script>
+</body>
+</html>`;
+}
+
+// Serve status dashboard at root
 app.get('/', (req, res) => {
+  // Check if request accepts HTML
+  if (req.headers.accept && req.headers.accept.includes('text/html')) {
+    res.setHeader('Content-Type', 'text/html');
+    res.send(getStatusDashboardHTML());
+  } else {
+    // Return JSON for API clients
+    res.json({ 
+      message: 'ChatGPT Cookie Manager API', 
+      status: 'running',
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV || 'development',
+      version: '1.0.0'
+    });
+  }
+});
+
+// API status endpoint (JSON only)
+app.get('/api', (req, res) => {
   res.json({ 
     message: 'ChatGPT Cookie Manager API', 
     status: 'running',
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development'
+    environment: process.env.NODE_ENV || 'development',
+    version: '1.0.0'
   });
 });
 
