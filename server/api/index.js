@@ -364,6 +364,15 @@ async function connectToDatabase() {
 // Vercel serverless function handler
 export default async function handler(req, res) {
   try {
+    // Log the request for debugging
+    console.log('🔍 Request:', {
+      method: req.method,
+      url: req.url,
+      originalUrl: req.headers['x-vercel-original-url'] || req.url,
+      origin: req.headers.origin,
+      userAgent: req.headers['user-agent']
+    });
+
     // For now, skip database connection to fix CORS issues
     // TODO: Add database connection back when MONGODB_URI is properly configured
     return app(req, res);
