@@ -1,23 +1,17 @@
 {
   "version": 2,
   "name": "chatgpt-cookie-server",
-  "builds": [
+  "rewrites": [
     {
-      "src": "src/server.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "src/server.js"
+      "source": "/(.*)",
+      "destination": "/api"
     }
   ],
   "env": {
     "NODE_ENV": "production"
   },
   "functions": {
-    "src/server.js": {
+    "api/index.js": {
       "maxDuration": 30
     }
   }
