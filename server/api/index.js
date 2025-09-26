@@ -373,6 +373,17 @@ export default async function handler(req, res) {
       userAgent: req.headers['user-agent']
     });
 
+    // Handle CORS preflight requests immediately
+    if (req.method === 'OPTIONS') {
+      console.log('🔄 Handling preflight request for:', req.headers.origin);
+      res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Origin, X-Requested-With, Accept');
+      res.setHeader('Access-Control-Allow-Credentials', 'true');
+      res.setHeader('Access-Control-Max-Age', '86400'); // 24 hours
+      return res.status(200).end();
+    }
+
     // For now, skip database connection to fix CORS issues
     // TODO: Add database connection back when MONGODB_URI is properly configured
     return app(req, res);
