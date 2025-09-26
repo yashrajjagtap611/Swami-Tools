@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "node src/server.js",
-    "start": "cross-env NODE_ENV=production node src/server.js",
-    "build": "echo 'Build completed'",
+    "start": "node src/server.js",
+    "build": "npm install",
     "vercel-build": "echo 'Vercel build completed'",
     "setup": "node create-admin.js",
     "reset": "node reset-users.js",
