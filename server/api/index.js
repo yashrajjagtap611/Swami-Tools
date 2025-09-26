@@ -364,20 +364,13 @@ async function connectToDatabase() {
 // Vercel serverless function handler
 export default async function handler(req, res) {
   try {
-    // Skip database connection for health checks and root endpoint
-    if (req.url === '/health' || req.url === '/') {
-      return app(req, res);
-    }
-    
-    // Connect to database for API routes
-    await connectToDatabase();
-    
-    // Handle the request with Express app
+    // For now, skip database connection to fix CORS issues
+    // TODO: Add database connection back when MONGODB_URI is properly configured
     return app(req, res);
   } catch (error) {
     console.error('❌ Handler error:', error);
     return res.status(500).json({ 
-      error: 'Database connection failed',
+      error: 'Server error',
       message: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
     });
   }
