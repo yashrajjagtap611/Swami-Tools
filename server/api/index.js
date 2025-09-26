@@ -58,8 +58,20 @@ app.use(cors({
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
+  preflightContinue: false,
+  optionsSuccessStatus: 200
 }));
+
+// Handle preflight requests explicitly
+app.options('*', (req, res) => {
+  console.log('🔄 Preflight request from:', req.headers.origin);
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Origin, X-Requested-With, Accept');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.status(200).end();
+});
 
 // Security middleware
 app.use(helmet({
@@ -352,7 +364,12 @@ async function connectToDatabase() {
 // Vercel serverless function handler
 export default async function handler(req, res) {
   try {
-    // Connect to database
+    // Skip database connection for health checks and root endpoint
+    if (req.url === '/health' || req.url === '/') {
+      return app(req, res);
+    }
+    
+    // Connect to database for API routes
     await connectToDatabase();
     
     // Handle the request with Express app
