@@ -49,6 +49,7 @@ import {
   Login as LoginIcon
 } from '@mui/icons-material';
 import { userAPI } from '../services/api';
+import { config } from '../config/env';
 
 interface User {
   _id: string;
@@ -212,7 +213,7 @@ const Users: React.FC = () => {
   const handleBulkStatusChange = async (isActive: boolean) => {
     if (selectedUserIds.length === 0) return;
     try {
-      const response = await fetch('http://localhost:8080/api/users/admin/users/status-bulk', {
+      const response = await fetch(`${config.apiUrl}/users/admin/users/status-bulk`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -249,7 +250,7 @@ const Users: React.FC = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:8080/api/auth/create', {
+      const response = await fetch(`${config.apiUrl}/auth/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
