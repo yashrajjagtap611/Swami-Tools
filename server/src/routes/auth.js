@@ -271,3 +271,165 @@ authRouter.get('/users', authMiddleware, async (req, res) => {
     res.status(500).json({ message: 'Server error listing users' });
   }
 });
+
+// Check plan status endpoint
+authRouter.post('/check-plan', authMiddleware, async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      console.log('❌ User not found for plan check:', userId);
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Check if user account is active
+    if (!user.isActive) {
+      console.log('❌ Plan check failed: User account inactive:', user.username);
+      return res.status(403).json({ 
+        reason: 'plan_expired',
+        message: 'Account is inactive. Contact administrator.' 
+      });
+    }
+
+    // Check if user account has expired
+    if (user.expiryDate && new Date() > user.expiryDate) {
+      console.log('❌ Plan check failed: User account expired:', user.username);
+      return res.status(403).json({ 
+        reason: 'plan_expired',
+        message: 'Your plan has expired. Please renew your subscription to continue using the extension.' 
+      });
+    }
+
+    // Calculate plan expiry time
+    let planExpiresIn = null;
+    let planExpiryWarning = null;
+    
+    if (user.expiryDate) {
+      const now = new Date();
+      const expiryDate = new Date(user.expiryDate);
+      planExpiresIn = Math.floor((expiryDate - now) / 1000); // seconds until expiry
+      
+      // Generate warning if plan expires soon
+      if (planExpiresIn < 86400) { // Less than 24 hours
+        const hoursLeft = Math.floor(planExpiresIn / 3600);
+        if (hoursLeft <= 0) {
+          planExpiryWarning = 'Your plan has expired. Please renew immediately.';
+        } else if (hoursLeft < 24) {
+          planExpiryWarning = `Your plan expires in ${hoursLeft} hours. Please renew to avoid service interruption.`;
+        }
+      }
+    }
+
+    console.log('✅ Plan check successful for user:', user.username, 'Expires in:', planExpiresIn);
+
+    res.json({
+      status: 'active',
+      planExpiresIn,
+      planExpiryWarning,
+      user: {
+        username: user.username,
+        isAdmin: user.isAdmin,
+        expiryDate: user.expiryDate
+      }
+    });
+  } catch (error) {
+    console.error('❌ Plan check error:', error);
+    res.status(500).json({ message: 'Server error checking plan status' });
+  }
+});
+
+// Validate session endpoint
+authRouter.post('/validate-session', authMiddleware, async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      console.log('❌ Session validation failed: User not found:', userId);
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Check if user account is active
+    if (!user.isActive) {
+      console.log('❌ Session validation failed: User account inactive:', user.username);
+      return res.status(403).json({ 
+        reason: 'plan_expired',
+        message: 'Account is inactive. Contact administrator.' 
+      });
+    }
+
+    // Check if user account has expired
+    if (user.expiryDate && new Date() > user.expiryDate) {
+      console.log('❌ Session validation failed: User account expired:', user.username);
+      return res.status(403).json({ 
+        reason: 'plan_expired',
+        message: 'Your plan has expired. Please renew your subscription to continue using the extension.' 
+      });
+    }
+
+    // Calculate plan expiry time
+    let planExpiresIn = null;
+    let planExpiryWarning = null;
+    
+    if (user.expiryDate) {
+      const now = new Date();
+      const expiryDate = new Date(user.expiryDate);
+      planExpiresIn = Math.floor((expiryDate - now) / 1000); // seconds until expiry
+      
+      // Generate warning if plan expires soon
+      if (planExpiresIn < 86400) { // Less than 24 hours
+        const hoursLeft = Math.floor(planExpiresIn / 3600);
+        if (hoursLeft <= 0) {
+          planExpiryWarning = 'Your plan has expired. Please renew immediately.';
+        } else if (hoursLeft < 24) {
+          planExpiryWarning = `Your plan expires in ${hoursLeft} hours. Please renew to avoid service interruption.`;
+        }
+      }
+    }
+
+    console.log('✅ Session validation successful for user:', user.username, 'Expires in:', planExpiresIn);
+
+    res.json({
+      valid: true,
+      planExpiresIn,
+      planExpiryWarning,
+      user: {
+        username: user.username,
+        isAdmin: user.isAdmin,
+        expiryDate: user.expiryDate
+      }
+    });
+  } catch (error) {
+    console.error('❌ Session validation error:', error);
+    res.status(500).json({ message: 'Server error validating session' });
+  }
+});
+
+// Logout endpoint
+authRouter.post('/logout', authMiddleware, async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const { deviceId } = req.body;
+    
+    console.log('🚪 Logout request from user:', userId, 'Device:', deviceId);
+    
+    // Update user's session info
+    await User.findByIdAndUpdate(userId, {
+      $set: { 
+        lastLogout: new Date(),
+        currentSessionId: null // Clear session ID
+      }
+    });
+
+    console.log('✅ Logout successful for user:', userId);
+
+    res.json({
+      message: 'Logout successful',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('❌ Logout error:', error);
+    res.status(500).json({ message: 'Server error during logout' });
+  }
+});
