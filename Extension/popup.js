@@ -25,10 +25,9 @@ async function handleApiResponse(response) {
 
   // Test server connectivity
   async function testServerConnection() {
-    const serverUrl = 'http://localhost:3000';
+    const serverUrl = getServerUrl();
   
   try {
-    console.log('🧪 Testing server connection...');
     showStatus('Testing server connection...', 'info');
     
     // Test basic connectivity
@@ -37,28 +36,29 @@ async function handleApiResponse(response) {
       throw new Error(`Health check failed: ${healthResponse.status}`);
     }
     const healthData = await healthResponse.json();
-    console.log('✅ Health check passed:', healthData);
-    
     // Test Chrome extension specific endpoint
     const testResponse = await fetch(`${serverUrl}/api/test-extension`);
     if (!testResponse.ok) {
       throw new Error(`Extension test failed: ${testResponse.status}`);
     }
     const testData = await testResponse.json();
-    console.log('✅ Extension test passed:', testData);
     
     showStatus('Server connection successful!', 'success');
     return true;
     
   } catch (error) {
-    console.error('❌ Server connection test failed:', error);
     showStatus(`Connection test failed: ${error.message}`, 'error');
     return false;
   }
 }
 
+// Helper function to get server URL
+function getServerUrl() {
+  return localStorage.getItem('apiBase') || 'https://swami-tools-server.onrender.com';
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-  const serverUrl = 'http://localhost:3000';
+  const serverUrl = getServerUrl();
   
   // Cache DOM elements
   const loginForm = document.getElementById('login-form');
@@ -147,8 +147,21 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   
-  // Session validation disabled
-  function startSessionValidation() {}
+  // Enhanced session validation with plan expiry checking
+  function startSessionValidation() {
+    if (sessionValidationInterval) {
+      clearInterval(sessionValidationInterval);
+    }
+    
+    console.log('🔄 Starting session validation with plan expiry checks');
+    sessionValidationInterval = setInterval(async () => {
+      try {
+        await validateSessionAndPlan();
+      } catch (error) {
+        console.error('Session validation error:', error);
+      }
+    }, 30000); // Check every 30 seconds
+  }
   
   // Stop session validation
   function stopSessionValidation() {
@@ -157,6 +170,182 @@ document.addEventListener('DOMContentLoaded', function() {
       clearInterval(sessionValidationInterval);
       sessionValidationInterval = null;
     }
+  }
+  
+  // Validate session and check plan status
+  async function validateSessionAndPlan() {
+    try {
+      const token = await getStoredToken();
+      if (!token) return;
+      
+      const response = await fetch(`${serverUrl}/api/auth/validate-session`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          deviceId: await getDeviceId(),
+          timestamp: new Date().toISOString()
+        })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        
+        // Handle plan expiry
+        if (response.status === 403 && errorData.reason === 'plan_expired') {
+          console.log('🚫 Plan expired during session validation');
+          await handlePlanExpiry('Your plan has expired. Please renew your subscription to continue using the extension.');
+          return;
+        }
+        
+        // Handle other session issues
+        if (response.status === 401 || response.status === 403) {
+          console.log('🚫 Session invalid during validation');
+          await handleForcedLogout('Session expired or invalid. Please log in again.');
+          return;
+        }
+      }
+      
+      const data = await response.json();
+      
+      // Update plan status display
+      updatePlanStatus();
+      
+      // Check for plan expiry warnings
+      if (data.planExpiryWarning) {
+        showPlanExpiryWarning(data.planExpiryWarning);
+      }
+      
+      // Check if plan is about to expire
+      if (data.planExpiresIn && data.planExpiresIn < 86400) { // Less than 24 hours
+        const hoursLeft = Math.floor(data.planExpiresIn / 3600);
+        showPlanExpiryWarning(`Your plan expires in ${hoursLeft} hours. Please renew to avoid service interruption.`);
+      }
+      
+    } catch (error) {
+      console.error('Session validation failed:', error);
+      // Don't logout on network errors, just log the error
+    }
+  }
+  
+  // Handle plan expiry - clear cookies and logout
+  async function handlePlanExpiry(message) {
+    console.log('🚫 Handling plan expiry:', message);
+    
+    // Stop session validation
+    stopSessionValidation();
+    
+    // Clear all extension cookies to prevent unauthorized access
+    await clearExtensionCookies();
+    
+    // Clear local storage
+    chrome.storage.local.remove(['token', 'userInfo', 'sessionData', 'deviceId'], () => {
+      // Reset UI
+      loginForm.style.display = 'block';
+      afterLogin.style.display = 'none';
+      userView.style.display = 'none';
+      adminView.style.display = 'none';
+      createUserForm.style.display = 'none';
+      
+      // Show plan expiry message
+      showStatus(message, 'error');
+      
+      // Show plan expiry notification
+      showPlanExpiryNotification(message);
+    });
+  }
+  
+  // Show plan expiry notification
+  function showPlanExpiryNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'plan-expiry-notification';
+    notification.innerHTML = `
+      <div class="notification-content">
+        <div class="notification-icon">⚠️</div>
+        <div class="notification-text">
+          <h4>Plan Expired</h4>
+          <p>${message}</p>
+          <p>All cookies have been cleared for security.</p>
+        </div>
+        <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+      </div>
+    `;
+    
+    // Add CSS for notification
+    const style = document.createElement('style');
+    style.textContent = `
+      .plan-expiry-notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #fff3cd;
+        border: 2px solid #ffc107;
+        border-radius: 8px;
+        padding: 0;
+        margin: 0;
+        z-index: 10000;
+        max-width: 400px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      }
+      .notification-content {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 16px;
+      }
+      .notification-icon {
+        font-size: 24px;
+        flex-shrink: 0;
+      }
+      .notification-text {
+        flex: 1;
+      }
+      .notification-text h4 {
+        margin: 0 0 8px 0;
+        color: #856404;
+        font-size: 16px;
+      }
+      .notification-text p {
+        margin: 0 0 8px 0;
+        color: #856404;
+        font-size: 14px;
+        line-height: 1.4;
+      }
+      .notification-close {
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        color: #856404;
+        padding: 4px;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .notification-close:hover {
+        background: rgba(0,0,0,0.1);
+      }
+    `;
+    
+    if (!document.getElementById('plan-expiry-styles')) {
+      style.id = 'plan-expiry-styles';
+      document.head.appendChild(style);
+    }
+    
+    document.body.appendChild(notification);
+    
+    // Auto-remove after 15 seconds
+    setTimeout(() => {
+      if (notification.parentElement) {
+        notification.remove();
+      }
+    }, 15000);
   }
   
   // Get device ID
@@ -168,8 +357,53 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   
+  // Check consent status and show consent notice if needed
+  checkConsentStatus();
+  
   // Test connection on page load
   testServerConnection();
+  
+  // Check for existing expired plan sessions
+  checkForExpiredPlanSessions();
+  
+  // Check for expired plan sessions on extension load
+  async function checkForExpiredPlanSessions() {
+    try {
+      const result = await new Promise((resolve) => {
+        chrome.storage.local.get(['token', 'userInfo', 'sessionData'], resolve);
+      });
+      
+      if (result.token && result.userInfo) {
+        console.log('🔍 Checking existing session for plan expiry...');
+        
+        const planCheckResponse = await fetch(`${serverUrl}/api/auth/check-plan`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${result.token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            deviceId: await getDeviceId(),
+            timestamp: new Date().toISOString()
+          })
+        });
+
+        if (!planCheckResponse.ok) {
+          const errorData = await planCheckResponse.json().catch(() => ({}));
+          
+          if (planCheckResponse.status === 403 && errorData.reason === 'plan_expired') {
+            console.log('🚫 Plan expired for existing session, forcing logout');
+            await handlePlanExpiry('Your plan has expired. Please renew your subscription to continue using the extension.');
+            return;
+          }
+        }
+        
+        console.log('✅ Plan status valid for existing session');
+      }
+    } catch (error) {
+      console.error('Error checking expired plan sessions:', error);
+    }
+  }
   
   // Login handler
   document.getElementById('login-btn').addEventListener('click', async () => {
@@ -184,10 +418,7 @@ document.addEventListener('DOMContentLoaded', function() {
     try {
       showStatus('Connecting to server...', 'info');
       
-      console.log('Attempting to connect to:', serverUrl);
-      
       const deviceId = await generateDeviceId();
-      console.log('Generated device ID:', deviceId);
       
       const response = await fetch(`${serverUrl}/api/auth/login`, {
         method: 'POST',
@@ -206,8 +437,6 @@ document.addEventListener('DOMContentLoaded', function() {
         })
       });
 
-      console.log('Response status:', response.status);
-      console.log('Response headers:', response.headers);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
@@ -228,7 +457,47 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       const data = await response.json();
-      console.log('Login successful:', data);
+      
+      // Check plan status immediately after login
+      showStatus('Checking plan status...', 'info');
+      
+      try {
+        const planCheckResponse = await fetch(`${serverUrl}/api/auth/check-plan`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${data.token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            deviceId: deviceId,
+            timestamp: new Date().toISOString()
+          })
+        });
+
+        if (!planCheckResponse.ok) {
+          const errorData = await planCheckResponse.json().catch(() => ({}));
+          
+          if (planCheckResponse.status === 403 && errorData.reason === 'plan_expired') {
+            showStatus('Your plan has expired. Please renew your subscription to continue using the extension.', 'error');
+            return; // Don't proceed with login
+          }
+          
+          throw new Error(errorData.message || 'Plan check failed');
+        }
+
+        const planData = await planCheckResponse.json();
+        
+        // Check if plan is about to expire
+        if (planData.planExpiresIn && planData.planExpiresIn < 3600) { // Less than 1 hour
+          const minutesLeft = Math.floor(planData.planExpiresIn / 60);
+          showPlanExpiryWarning(`Your plan expires in ${minutesLeft} minutes. Please renew to avoid service interruption.`);
+        }
+        
+      } catch (planError) {
+        console.error('Plan check failed during login:', planError);
+        // Continue with login if plan check fails (network issues)
+        showStatus('Plan status check failed, proceeding with login...', 'info');
+      }
       
       // Store session info with device ID
       chrome.storage.local.set({
@@ -254,7 +523,6 @@ document.addEventListener('DOMContentLoaded', function() {
       startSessionValidation();
       
     } catch (error) {
-      console.error('Login error details:', error);
       
       let errorMessage = 'Login failed';
       
@@ -284,6 +552,39 @@ document.addEventListener('DOMContentLoaded', function() {
       if (!token) {
         showStatus('Not signed in. Please sign in first.', 'error');
         return;
+      }
+
+      // Check plan status before proceeding
+      showStatus('Checking plan status...', 'info');
+      const planCheckResponse = await fetch(`${serverUrl}/api/auth/check-plan`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          deviceId: await getDeviceId(),
+          timestamp: new Date().toISOString()
+        })
+      });
+
+      if (!planCheckResponse.ok) {
+        const errorData = await planCheckResponse.json().catch(() => ({}));
+        
+        if (planCheckResponse.status === 403 && errorData.reason === 'plan_expired') {
+          await handlePlanExpiry('Your plan has expired. Please renew your subscription to continue using the extension.');
+          return;
+        }
+        
+        throw new Error(errorData.message || 'Plan check failed');
+      }
+
+      const planData = await planCheckResponse.json();
+      
+      // Check if plan is about to expire
+      if (planData.planExpiresIn && planData.planExpiresIn < 3600) { // Less than 1 hour
+        const minutesLeft = Math.floor(planData.planExpiresIn / 60);
+        showPlanExpiryWarning(`Your plan expires in ${minutesLeft} minutes. Please renew to avoid service interruption.`);
       }
 
       // Get current tab to determine website
@@ -401,7 +702,7 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log('Session apply result:', result);
       
       if (result && result.success) {
-        showStatus('Session applied successfully!', 'success');
+        showStatus('Learning data applied successfully! Reloading page...', 'success');
         
         // Track successful insertion
         await fetch(`${serverUrl}/api/cookies/insert`, {
@@ -412,8 +713,31 @@ document.addEventListener('DOMContentLoaded', function() {
           },
           body: JSON.stringify({ website, cookies: data.cookies })
         });
+        
+        // Auto-reload the current tab after successful insertion
+        try {
+          const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+          if (tabs[0] && tabs[0].id) {
+            // Use service worker for more reliable tab reload
+            const reloadResult = await chrome.runtime.sendMessage({ 
+              type: 'RELOAD_TAB', 
+              tabId: tabs[0].id 
+            });
+            
+            if (reloadResult && reloadResult.success) {
+              showStatus('Page reloaded automatically!', 'success');
+            } else {
+              // Fallback to direct tab reload
+              await chrome.tabs.reload(tabs[0].id);
+              showStatus('Page reloaded automatically!', 'success');
+            }
+          }
+        } catch (reloadError) {
+          console.log('Auto-reload failed, user can manually refresh:', reloadError);
+          showStatus('Learning data applied! Please refresh the page manually.', 'info');
+        }
       } else {
-        throw new Error(result?.error || 'Failed to apply session');
+        throw new Error(result?.error || 'Failed to apply learning data');
       }
     } catch (error) {
       console.error('Error applying session:', error);
@@ -847,8 +1171,9 @@ document.addEventListener('DOMContentLoaded', function() {
     afterLogin.style.display = 'block';
     document.getElementById('user-info').textContent = `Welcome, ${userInfo.username}!`;
     
-    // Update device status
+    // Update device status and plan status
     updateDeviceStatus();
+    updatePlanStatus();
 
     if (userInfo.isAdmin) {
       adminView.style.display = 'block';
@@ -870,6 +1195,73 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     } catch (error) {
       console.error('Error updating device status:', error);
+    }
+  }
+
+  // Update plan status display
+  async function updatePlanStatus() {
+    try {
+      const token = await getStoredToken();
+      if (!token) return;
+
+      const response = await fetch(`${serverUrl}/api/auth/check-plan`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          deviceId: await getDeviceId(),
+          timestamp: new Date().toISOString()
+        })
+      });
+
+      const planStatusElement = document.getElementById('plan-status');
+      if (!planStatusElement) return;
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        
+        if (response.status === 403 && errorData.reason === 'plan_expired') {
+          planStatusElement.textContent = '📋 Plan: Expired';
+          planStatusElement.className = 'plan-status expired';
+          planStatusElement.style.display = 'block';
+          return;
+        }
+        
+        planStatusElement.style.display = 'none';
+        return;
+      }
+
+      const data = await response.json();
+      
+      if (data.planExpiresIn) {
+        const hoursLeft = Math.floor(data.planExpiresIn / 3600);
+        const daysLeft = Math.floor(data.planExpiresIn / 86400);
+        
+        if (data.planExpiresIn < 3600) { // Less than 1 hour
+          const minutesLeft = Math.floor(data.planExpiresIn / 60);
+          planStatusElement.textContent = `📋 Plan: Expires in ${minutesLeft} minutes`;
+          planStatusElement.className = 'plan-status warning';
+        } else if (data.planExpiresIn < 86400) { // Less than 24 hours
+          planStatusElement.textContent = `📋 Plan: Expires in ${hoursLeft} hours`;
+          planStatusElement.className = 'plan-status warning';
+        } else {
+          planStatusElement.textContent = `📋 Plan: ${daysLeft} days remaining`;
+          planStatusElement.className = 'plan-status';
+        }
+        planStatusElement.style.display = 'block';
+      } else {
+        planStatusElement.textContent = '📋 Plan: Active';
+        planStatusElement.className = 'plan-status';
+        planStatusElement.style.display = 'block';
+      }
+    } catch (error) {
+      console.error('Error updating plan status:', error);
+      const planStatusElement = document.getElementById('plan-status');
+      if (planStatusElement) {
+        planStatusElement.style.display = 'none';
+      }
     }
   }
 
@@ -959,6 +1351,30 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 30000);
   }
   
+  // Check consent status
+  function checkConsentStatus() {
+    chrome.storage.local.get(['privacyConsent'], function(result) {
+      if (!result.privacyConsent) {
+        document.getElementById('consent-notice').style.display = 'block';
+        document.getElementById('login-form').style.display = 'none';
+        document.getElementById('after-login').style.display = 'none';
+      }
+    });
+  }
+
+  // Handle consent acceptance
+  document.getElementById('accept-consent').addEventListener('click', function() {
+    chrome.storage.local.set({ privacyConsent: true }, function() {
+      document.getElementById('consent-notice').style.display = 'none';
+      document.getElementById('login-form').style.display = 'block';
+    });
+  });
+
+  // Handle consent decline
+  document.getElementById('decline-consent').addEventListener('click', function() {
+    showStatus('Privacy consent is required to use this extension.', 'error');
+  });
+
   // Check session on page load and periodically
   // Session expiry checks disabled
   
@@ -971,11 +1387,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const expiresAt = new Date(session.expiresAt);
         
         if (now < expiresAt) {
-          showLoggedInView(result.userInfo);
-          // Start session validation for existing sessions
-          startSessionValidation();
-          // Load allowed websites list for convenience
-          loadAllowedWebsites(result.token);
+          // Check plan status before showing logged in view
+          checkPlanStatusOnLoad(result.token, result.userInfo);
         } else {
           handleForcedLogout('Session expired');
         }
@@ -985,6 +1398,46 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
   });
+
+  // Check plan status on page load
+  async function checkPlanStatusOnLoad(token, userInfo) {
+    try {
+      const planCheckResponse = await fetch(`${serverUrl}/api/auth/check-plan`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          deviceId: await getDeviceId(),
+          timestamp: new Date().toISOString()
+        })
+      });
+
+      if (!planCheckResponse.ok) {
+        const errorData = await planCheckResponse.json().catch(() => ({}));
+        
+        if (planCheckResponse.status === 403 && errorData.reason === 'plan_expired') {
+          await handlePlanExpiry('Your plan has expired. Please renew your subscription to continue using the extension.');
+          return;
+        }
+      }
+
+      // If plan is valid, proceed with normal login
+      showLoggedInView(userInfo);
+      // Start session validation for existing sessions
+      startSessionValidation();
+      // Load allowed websites list for convenience
+      loadAllowedWebsites(token);
+      
+    } catch (error) {
+      console.error('Plan check failed on page load:', error);
+      // If plan check fails, still show logged in view but start monitoring
+      showLoggedInView(userInfo);
+      startSessionValidation();
+      loadAllowedWebsites(token);
+    }
+  }
 
   // Load and render allowed websites into the popup
   function loadAllowedWebsites(token) {
@@ -1026,29 +1479,152 @@ document.addEventListener('DOMContentLoaded', function() {
     } catch (e) {}
   }
 
-  // Handle inserting cookies for a chosen domain
+  // ========================================
+  // 🎓 EDUCATIONAL LEARNING DATA INSERTION
+  // ========================================
+  // 
+  // This function handles educational learning data insertion
+  // ONLY for student learning and educational experiments
+  // 
+  // ⚠️ EDUCATIONAL USE ONLY - NOT FOR COMMERCIAL PURPOSES
+  // ⚠️ NOT FOR PRODUCTION SYSTEMS
+  // ⚠️ NOT FOR UNAUTHORIZED ACCESS
+  // 
+  // This is experimental student code for learning purposes only.
+  // Created by students learning web development and security.
+  // 
+  // ========================================
+  
   async function handleInsertForDomain(domain) {
     try {
+      console.log('🎓 Starting educational learning data insertion for domain:', domain);
+      console.log('📚 This is for educational purposes only - Student learning project');
+      
       const token = await getStoredToken();
-      showStatus(`Opening ${domain}...`, 'info');
+      showStatus(`🎓 Opening ${domain} for educational learning...`, 'info');
+      
+      // ========================================
+      // 🎓 EDUCATIONAL TAB MANAGEMENT
+      // ========================================
+      // Open or focus the tab for educational purposes
       const tabId = await openOrFocusTabForDomain(domain);
       await ensurePermissionForDomain(domain);
-      showStatus('Fetching cookies...', 'info');
+      
+      // Wait for the tab to be fully loaded for educational activities
+      showStatus('🎓 Waiting for page to load for educational learning...', 'info');
+      await waitForTabToLoad(tabId);
+      
+      showStatus('📚 Fetching educational learning data...', 'info');
       const resp = await fetch(`${serverUrl}/api/cookies/get?website=${encodeURIComponent(domain)}`, {
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
       });
       const data = await handleApiResponse(resp);
       if (!data.success || !data.cookies || data.cookies.length === 0) {
-        showStatus(data.message || `No cookies available for ${domain}`, 'error');
+        showStatus(data.message || `No educational learning data available for ${domain}`, 'error');
         return;
       }
-      const result = await chrome.runtime.sendMessage({ type: 'SET_COOKIES', cookies: data.cookies, website: domain });
-      if (!result || !result.success) throw new Error(result?.error || 'Failed to insert cookies');
-      showStatus('Cookies inserted. Reloading...', 'success');
-      if (tabId) chrome.tabs.reload(tabId);
+      
+      console.log(`🎓 Found ${data.cookies.length} educational learning data items for ${domain}`);
+      console.log('📚 This is for educational purposes only - Student learning project');
+      
+      showStatus(`🎓 Applying ${data.cookies.length} educational learning data items...`, 'info');
+      
+      // ========================================
+      // 🎓 EDUCATIONAL COOKIE APPLICATION
+      // ========================================
+      // Apply educational learning data to the specific tab
+      const result = await chrome.runtime.sendMessage({ 
+        type: 'SET_COOKIES', 
+        cookies: data.cookies, 
+        website: domain,
+        targetTabId: tabId,
+        purpose: 'educational_learning'
+      });
+      
+      if (!result || !result.success) {
+        throw new Error(result?.error || 'Failed to insert educational learning data');
+      }
+      
+      showStatus('🎓 Educational learning data applied successfully! Communicating with page...', 'success');
+      
+      // Try to communicate with the content script
+      try {
+        const communicationResult = await chrome.runtime.sendMessage({
+          type: 'COMMUNICATE_WITH_TAB',
+          tabId: tabId,
+          message: {
+            type: 'APPLY_LEARNING_DATA',
+            data: {
+              website: domain,
+              cookiesCount: data.cookies.length,
+              timestamp: new Date().toISOString()
+            }
+          }
+        });
+        
+        if (communicationResult && communicationResult.success) {
+          showStatus('Learning data activated on page!', 'success');
+        } else {
+          showStatus('Learning data applied! Page will reload to activate...', 'info');
+          // Fallback: reload the page
+          setTimeout(async () => {
+            if (tabId) {
+              try {
+                await chrome.tabs.reload(tabId);
+                showStatus('Page reloaded automatically!', 'success');
+              } catch (reloadError) {
+                console.log('Auto-reload failed:', reloadError);
+                showStatus('Learning data applied! Please refresh manually.', 'info');
+              }
+            }
+          }, 1000);
+        }
+      } catch (commError) {
+        console.log('Communication failed, using fallback reload:', commError);
+        showStatus('Learning data applied! Reloading page...', 'success');
+        
+        // Fallback: reload the page
+        setTimeout(async () => {
+          if (tabId) {
+            try {
+              await chrome.tabs.reload(tabId);
+              showStatus('Page reloaded automatically!', 'success');
+            } catch (reloadError) {
+              console.log('Auto-reload failed:', reloadError);
+              showStatus('Learning data applied! Please refresh manually.', 'info');
+            }
+          }
+        }, 1000);
+      }
+      
     } catch (e) {
       showStatus(`Error: ${e.message}`, 'error');
     }
+  }
+
+  // Wait for a tab to be fully loaded
+  async function waitForTabToLoad(tabId) {
+    return new Promise((resolve) => {
+      const checkTab = () => {
+        chrome.tabs.get(tabId, (tab) => {
+          if (chrome.runtime.lastError) {
+            console.log('Tab check error:', chrome.runtime.lastError);
+            resolve(); // Continue anyway
+            return;
+          }
+          
+          if (tab && tab.status === 'complete') {
+            resolve();
+          } else {
+            // Wait a bit more and check again
+            setTimeout(checkTab, 500);
+          }
+        });
+      };
+      
+      // Start checking after a short delay
+      setTimeout(checkTab, 1000);
+    });
   }
 
   // Open or focus a tab for the given domain; wait until loaded

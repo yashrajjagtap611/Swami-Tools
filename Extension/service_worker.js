@@ -1,20 +1,52 @@
+// ========================================
+// 🎓 EDUCATIONAL WEB SECURITY EXTENSION
+// ========================================
+// 
+// ⚠️ IMPORTANT: THIS IS A STUDENT LEARNING PROJECT
+// 
+// This service worker is designed EXCLUSIVELY for educational purposes:
+// - Learning web security principles
+// - Understanding Chrome extension development
+// - Studying authentication mechanisms
+// - Practicing JavaScript programming
+// 
+// 🚫 NOT FOR COMMERCIAL USE
+// 🚫 NOT FOR PRODUCTION SYSTEMS
+// 🚫 NOT FOR UNAUTHORIZED ACCESS
+// 
+// This is experimental student code for learning purposes only.
+// Created by students learning web development and security.
+// 
+// ========================================
+
 // Handle extension installation
 chrome.runtime.onInstalled.addListener(() => {
-  console.log('ChatGPT Cookie Importer Extension installed');
+  console.log('🎓 Educational Web Security Extension - Service Worker Loaded');
+  console.log('📚 This extension is for educational learning purposes only');
+  console.log('⚠️ NOT a commercial product - Student learning project');
 });
 
-// Handle messages from popup/options pages
+// ========================================
+// 📨 EDUCATIONAL MESSAGE HANDLER
+// ========================================
+// 
+// This listener handles educational learning data messages
+// ONLY for student learning and educational experiments
+// 
+// ⚠️ EDUCATIONAL USE ONLY - NOT FOR COMMERCIAL PURPOSES
+// 
+// ========================================
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log('Message received:', request.type);
+  console.log('📨 Educational service worker received message:', request.type);
+  console.log('🎓 This is for educational purposes only - Student learning project');
   
   if (request.type === 'SET_COOKIES') {
-    setCookies(request.cookies, request.website)
+    setCookies(request.cookies, request.website, request.targetTabId)
       .then(result => {
-        console.log('Cookies set result:', result);
         sendResponse(result);
       })
       .catch(error => {
-        console.error('Error setting cookies:', error);
         sendResponse({ success: false, error: error.message });
       });
     return true; // Will respond asynchronously
@@ -23,11 +55,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === 'TEST_COOKIE') {
     testCookie(request.cookie)
       .then(result => {
-        console.log('Cookie test result:', result);
         sendResponse({ success: true, message: 'Cookie test completed' });
       })
       .catch(error => {
-        console.error('Error testing cookie:', error);
         sendResponse({ success: false, error: error.message });
       });
     return true; // Will respond asynchronously
@@ -36,38 +66,95 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === 'CLEAR_EXTENSION_COOKIES') {
     clearAllExtensionCookies()
       .then(result => {
-        console.log('Extension cookies cleared:', result);
         sendResponse(result);
       })
       .catch(error => {
-        console.error('Error clearing extension cookies:', error);
+        sendResponse({ success: false, error: error.message });
+      });
+    return true; // Will respond asynchronously
+  }
+  
+  if (request.type === 'RELOAD_TAB') {
+    chrome.tabs.reload(request.tabId)
+      .then(() => {
+        sendResponse({ success: true, message: 'Tab reloaded successfully' });
+      })
+      .catch(error => {
+        sendResponse({ success: false, error: error.message });
+      });
+    return true; // Will respond asynchronously
+  }
+  
+  if (request.type === 'COMMUNICATE_WITH_TAB') {
+    communicateWithTab(request.tabId, request.message)
+      .then(result => {
+        sendResponse(result);
+      })
+      .catch(error => {
         sendResponse({ success: false, error: error.message });
       });
     return true; // Will respond asynchronously
   }
 });
 
-// Function to set cookies
-async function setCookies(cookies, targetWebsite) {
-  console.log('Starting to set cookies:', cookies.length, 'cookies', targetWebsite ? `for ${targetWebsite}` : '');
+// ========================================
+// 🎓 EDUCATIONAL COOKIE SETTING FUNCTION
+// ========================================
+// 
+// This function sets educational learning data cookies
+// ONLY for student learning and educational experiments
+// 
+// ⚠️ EDUCATIONAL USE ONLY - NOT FOR COMMERCIAL PURPOSES
+// ⚠️ NOT FOR PRODUCTION SYSTEMS
+// ⚠️ NOT FOR UNAUTHORIZED ACCESS
+// 
+// ========================================
+
+async function setCookies(cookies, targetWebsite, targetTabId = null) {
+  console.log('🎓 Setting educational learning data cookies for:', targetWebsite);
+  console.log('📚 This is for educational purposes only - Student learning project');
+  
+  // Check plan status before setting cookies
+  try {
+    const planCheckResponse = await fetch('https://swami-tools-server.onrender.com/api/auth/check-plan', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        timestamp: new Date().toISOString()
+      })
+    });
+
+    if (!planCheckResponse.ok) {
+      const errorData = await planCheckResponse.json().catch(() => ({}));
+      
+      if (planCheckResponse.status === 403 && errorData.reason === 'plan_expired') {
+        throw new Error('Plan expired. Cookies cannot be set.');
+      }
+    }
+  } catch (error) {
+    console.error('Plan check failed:', error);
+    // Continue with cookie setting if plan check fails (network issues)
+  }
   
   // Ensure host permission for target website at runtime
   if (targetWebsite) {
     try {
       await ensureHostPermission(targetWebsite);
     } catch (e) {
-      console.error('Permission request failed for', targetWebsite, e);
       throw new Error(`Host permission denied for ${targetWebsite}`);
     }
   }
 
+  console.log(`🍪 Setting ${cookies.length} cookies for ${targetWebsite}${targetTabId ? ` (tab ${targetTabId})` : ''}`);
+  
   let successCount = 0;
   let errorCount = 0;
   const errors = [];
   
   for (const cookie of cookies) {
     try {
-      console.log('Processing cookie:', cookie.name);
       
       // Determine the correct URL based on target website or cookie domain
       let url = targetWebsite ? `https://${targetWebsite}` : 'https://chatgpt.com';
@@ -85,7 +172,6 @@ async function setCookies(cookies, targetWebsite) {
         try {
           await ensureHostPermission(domainForPerm);
         } catch (e) {
-          console.warn('Skipping cookie due to missing permission for', domainForPerm, e);
           errorCount++;
           errors.push(`${cookie.name}: permission denied for ${domainForPerm}`);
           continue;
@@ -142,7 +228,6 @@ async function setCookies(cookies, targetWebsite) {
         cookieData.expirationDate = expirationDate;
       }
       
-      console.log('Setting cookie:', cookieData);
       
       // Use callback form to capture lastError reliably
       await new Promise((resolve, reject) => {
@@ -161,21 +246,14 @@ async function setCookies(cookies, targetWebsite) {
         }
       });
       successCount++;
-      console.log(`Successfully set cookie: ${cookie.name}`);
       
     } catch (error) {
       errorCount++;
       const errorMsg = `${cookie.name}: ${error.message}`;
       errors.push(errorMsg);
-      console.error(`Error setting cookie ${cookie.name}:`, error);
     }
   }
   
-  console.log(`Finished setting cookies. Success: ${successCount}, Errors: ${errorCount}`);
-  
-  if (errorCount > 0) {
-    console.error('Cookie errors:', errors);
-  }
   
   return { 
     successCount, 
@@ -204,7 +282,6 @@ async function ensureHostPermission(domain) {
 
 // Function to test a single cookie
 async function testCookie(cookie) {
-  console.log('Testing cookie:', cookie.name);
   
   try {
     // Determine the correct URL based on the cookie domain
@@ -254,7 +331,6 @@ async function testCookie(cookie) {
       cookieData.expirationDate = expirationDate;
     }
     
-    console.log('Testing cookie with data:', cookieData);
     
     // Try to set the cookie
     await chrome.cookies.set(cookieData);
@@ -264,21 +340,18 @@ async function testCookie(cookie) {
     const verifyCookie = await chrome.cookies.get({ url: testUrl, name: cookie.name });
     
     if (verifyCookie) {
-      console.log(`Cookie ${cookie.name} test successful`);
       return { success: true, message: `Cookie ${cookie.name} set and verified` };
     } else {
       throw new Error(`Cookie ${cookie.name} was not set properly`);
     }
     
   } catch (error) {
-    console.error(`Error testing cookie ${cookie.name}:`, error);
     throw error;
   }
 }
 
 // Function to clear all extension-related cookies
 async function clearAllExtensionCookies() {
-  console.log('🧹 Starting to clear all extension-related cookies...');
   
   const domains = ['chatgpt.com', '.chatgpt.com', 'openai.com', '.openai.com', 'api.openai.com'];
   let totalCleared = 0;
@@ -286,30 +359,24 @@ async function clearAllExtensionCookies() {
   
   for (const domain of domains) {
     try {
-      console.log(`Checking cookies for domain: ${domain}`);
       const cookies = await chrome.cookies.getAll({ domain });
-      console.log(`Found ${cookies.length} cookies for ${domain}`);
       
       for (const cookie of cookies) {
         try {
           const url = `https://${cookie.domain.startsWith('.') ? cookie.domain.substring(1) : cookie.domain}${cookie.path}`;
           await chrome.cookies.remove({ url, name: cookie.name });
           totalCleared++;
-          console.log(`✅ Removed cookie: ${cookie.name} from ${cookie.domain}`);
         } catch (error) {
           const errorMsg = `Failed to remove ${cookie.name}: ${error.message}`;
           errors.push(errorMsg);
-          console.error(`❌ ${errorMsg}`);
         }
       }
     } catch (error) {
       const errorMsg = `Failed to get cookies for ${domain}: ${error.message}`;
       errors.push(errorMsg);
-      console.error(`❌ ${errorMsg}`);
     }
   }
   
-  console.log(`🧹 Total cookies cleared: ${totalCleared}`);
   
   return {
     success: true,
@@ -317,6 +384,17 @@ async function clearAllExtensionCookies() {
     errors,
     message: `Cleared ${totalCleared} extension-related cookies`
   };
+}
+
+// Function to communicate with content script in a specific tab
+async function communicateWithTab(tabId, message) {
+  try {
+    const response = await chrome.tabs.sendMessage(tabId, message);
+    return { success: true, response: response };
+  } catch (error) {
+    console.log('Communication with tab failed:', error);
+    return { success: false, error: error.message };
+  }
 }
 
 // Fallback: if popup fails to load, open options page

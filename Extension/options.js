@@ -30,7 +30,7 @@
     const stored = localStorage.getItem('apiBase') || '';
     const v = (apiBaseEl && apiBaseEl.value || stored).trim();
     if (apiBaseEl && !apiBaseEl.value) apiBaseEl.value = v;
-    if (!v) return 'http://localhost:3000';
+    if (!v) return 'https://swami-tools-server.onrender.com';
     return v.replace(/\/$/, '');
   }
 
