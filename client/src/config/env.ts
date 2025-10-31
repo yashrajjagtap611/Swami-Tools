@@ -4,7 +4,7 @@
 export const config = {
   // API Configuration
   apiUrl: import.meta.env.VITE_API_URL || (import.meta.env.MODE === 'production'
-    ? 'https://swami-tools-server.onrender.com/api'
+    ? 'https://swami-tools-server.vercel.app/api'
     : 'http://localhost:8080/api'),
   apiTimeout: parseInt(import.meta.env.VITE_API_TIMEOUT || '10000'),
   
