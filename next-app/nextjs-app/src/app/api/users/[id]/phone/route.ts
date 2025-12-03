@@ -5,7 +5,7 @@ import { verifyToken } from '@/lib/jwt';
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const authHeader = request.headers.get('authorization');
@@ -22,11 +22,12 @@ export async function PUT(
     
     await connectDB();
     
+    const { id } = await params;
     const body = await request.json();
     const { countryCode, number } = body;
 
     const user = await User.findByIdAndUpdate(
-      params.id,
+      id,
       { 
         $set: { 
           phone: {

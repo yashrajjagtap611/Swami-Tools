@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import connectDB from '@/lib/mongodb';
 import User from '@/models/User';
 import { generateToken } from '@/lib/jwt';
@@ -45,8 +46,12 @@ export async function POST(request: NextRequest) {
     await user.save();
 
     // Generate JWT token
+    const userId = user._id instanceof mongoose.Types.ObjectId 
+      ? user._id.toString() 
+      : String(user._id);
+    
     const token = generateToken({
-      userId: user._id.toString(),
+      userId,
       email: user.email,
     });
 
@@ -55,7 +60,7 @@ export async function POST(request: NextRequest) {
         message: 'User registered successfully',
         token,
         user: {
-          id: user._id,
+          id: userId,
           email: user.email,
           name: user.name,
         },

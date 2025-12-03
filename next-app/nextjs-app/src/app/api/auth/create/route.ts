@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import connectDB from '@/lib/mongodb';
 import User from '@/models/User';
 import { verifyToken } from '@/lib/jwt';
@@ -57,11 +58,15 @@ export async function POST(request: NextRequest) {
 
     await user.save();
 
+    const userId = user._id instanceof mongoose.Types.ObjectId 
+      ? user._id.toString() 
+      : String(user._id);
+
     return NextResponse.json(
       {
         message: 'User created successfully',
         user: {
-          id: user._id,
+          id: userId,
           email: user.email,
           name: user.name,
         },
