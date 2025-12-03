@@ -1,0 +1,266 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>ChatGPT Session Helper</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      /* ========================================
+         🎓 EDUCATIONAL EXTENSION OPTIONS STYLES
+         ======================================== */
+      
+      :root {
+        --primary-color: #4caf50;
+        --primary-dark: #388e3c;
+        --primary-light: #81c784;
+        --secondary-color: #2196f3;
+        --secondary-dark: #1976d2;
+        --accent-color: #ff9800;
+        --success-color: #4caf50;
+        --warning-color: #ff9800;
+        --error-color: #f44336;
+        --info-color: #2196f3;
+        --background-color: #f8f9fa;
+        --surface-color: #ffffff;
+        --text-primary: #212121;
+        --text-secondary: #757575;
+        --border-color: #e0e0e0;
+        --shadow: 0 2px 8px rgba(0,0,0,0.1);
+        --shadow-hover: 0 4px 12px rgba(0,0,0,0.15);
+      }
+      
+      body { 
+        font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; 
+        margin: 0;
+        padding: 24px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+        color: var(--text-primary);
+        min-height: 100vh;
+      }
+      
+      .card { 
+        max-width: 800px; 
+        border: 2px solid var(--border-color); 
+        border-radius: 12px; 
+        padding: 24px; 
+        background: var(--surface-color);
+        box-shadow: var(--shadow);
+        margin: 0 auto;
+      }
+      
+      h1 { 
+        font-size: 24px; 
+        margin: 0 0 20px; 
+        color: var(--primary-color);
+        font-weight: 700;
+        text-align: center;
+        border-bottom: 3px solid var(--primary-color);
+        padding-bottom: 12px;
+      }
+      
+      h1::before {
+        content: '🎓';
+        margin-right: 12px;
+        font-size: 28px;
+      }
+      
+      .row { 
+        margin: 16px 0; 
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      
+      label {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 4px;
+      }
+      
+      input[type="file"] { 
+        display: block; 
+        padding: 12px;
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        background: var(--surface-color);
+        transition: all 0.3s ease;
+      }
+      
+      input[type="file"]:hover {
+        border-color: var(--primary-color);
+        box-shadow: var(--shadow);
+      }
+      
+      button { 
+        padding: 12px 20px; 
+        border: 2px solid var(--primary-color); 
+        border-radius: 8px; 
+        background: var(--primary-color); 
+        color: white;
+        cursor: pointer; 
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow);
+      }
+      
+      button:hover {
+        background: var(--primary-dark);
+        border-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-hover);
+      }
+      
+      button[disabled] { 
+        opacity: 0.6; 
+        cursor: not-allowed;
+        transform: none;
+      }
+      
+      input {
+        padding: 12px 16px;
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 14px;
+        background: var(--surface-color);
+        transition: all 0.3s ease;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      
+      input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        transform: translateY(-1px);
+      }
+      
+      pre { 
+        white-space: pre-wrap; 
+        word-wrap: break-word; 
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef); 
+        border: 2px solid var(--border-color); 
+        padding: 16px; 
+        border-radius: 8px; 
+        max-height: 300px; 
+        overflow: auto;
+        font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+        font-size: 13px;
+        box-shadow: var(--shadow);
+      }
+      
+      .success { 
+        color: var(--success-color);
+        font-weight: 600;
+        background: linear-gradient(135deg, #e8f5e8, #f1f8e9);
+        padding: 8px 12px;
+        border-radius: 6px;
+        border: 2px solid var(--success-color);
+      }
+      
+      .error { 
+        color: var(--error-color);
+        font-weight: 600;
+        background: linear-gradient(135deg, #ffebee, #fce4ec);
+        padding: 8px 12px;
+        border-radius: 6px;
+        border: 2px solid var(--error-color);
+      }
+      
+      details {
+        background: var(--surface-color);
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        padding: 16px;
+        margin: 16px 0;
+        box-shadow: var(--shadow);
+      }
+      
+      summary {
+        font-weight: 700;
+        color: var(--primary-color);
+        cursor: pointer;
+        padding: 8px 0;
+        font-size: 16px;
+      }
+      
+      summary:hover {
+        color: var(--primary-dark);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>Session Manager - Settings</h1>
+      <p style="text-align:center; margin: -10px 0 20px; font-size:13px; color:#666;">
+        Manage session cookies and backups | <a href="privacy-policy.html" target="_blank" style="color:#2196f3; font-weight: 600;">Privacy Policy</a>
+      </p>
+      <div class="row">
+        <details>
+          <summary>Backend Server (optional): Sign in and restore cookie data from server</summary>
+          <div class="row">
+            <label>API Base URL</label>
+            <input id="api-base" placeholder="https://swami-tools-server.onrender.com" />
+          </div>
+          <div class="row">
+            <input id="email" placeholder="username" />
+            <input id="password" type="password" placeholder="password" />
+          </div>
+          <div class="row">
+            <button id="login">Login</button>
+            <button id="test-connection" style="margin-left:8px">Test Connection</button>
+            <span id="login-status"></span>
+          </div>
+          <div class="row">
+            <button id="one-click-login">One-Click Login & Restore</button>
+          </div>
+          <div class="row">
+            <button id="list-bundles">List Cookie Bundles</button>
+          </div>
+          <div class="row">
+            <label for="bundle-id">Bundle ID</label>
+            <input id="bundle-id" placeholder="Enter bundle ID" />
+            <button id="import-from-backend">Restore From Server</button>
+          </div>
+          <div class="row">
+            <pre id="bundles"></pre>
+          </div>
+        </details>
+      </div>
+      <div class="row" style="background:#fff3cd; border:2px solid #ff9800; border-radius:8px; padding:12px;">
+        <h2 style="font-size:16px;margin:0 0 8px; color:#856404;">⚠️ Important Usage Guidelines</h2>
+        <ul style="margin:6px 0 0 18px; padding:0; line-height:1.5; color:#856404;">
+          <li><strong>Authorized Use Only:</strong> Only manage cookies for websites you own or have explicit permission to access</li>
+          <li><strong>Data Collection:</strong> This extension collects and stores account info, cookies, device data on remote servers (see <a href="privacy-policy.html" target="_blank" style="color:#2196f3; font-weight:600;">Privacy Policy</a>)</li>
+          <li><strong>Legal Compliance:</strong> You are responsible for complying with applicable laws and terms of service</li>
+          <li><strong>Security:</strong> Cookies contain sensitive session data - protect your account credentials</li>
+          <li><strong>Your Rights:</strong> You can access, export, or delete your data at any time by contacting us</li>
+        </ul>
+      </div>
+      <div class="row">
+        <label for="file">Select cookie backup JSON file</label>
+        <input id="file" type="file" accept=".json,application/json" />
+      </div>
+      <div class="row">
+        <label><input id="clear-first" type="checkbox" /> Clear existing cookies before restore</label>
+      </div>
+      <div class="row">
+        <button id="import" disabled>Restore Cookie Data</button>
+        <button id="open-login" style="margin-left:8px">Open Website</button>
+      </div>
+      <div class="row">
+        <div id="status"></div>
+      </div>
+      <div class="row">
+        <details>
+          <summary>Log</summary>
+          <pre id="log"></pre>
+        </details>
+      </div>
+    </div>
+    <script src="options.js"></script>
+  </body>
+  </html>
+
+

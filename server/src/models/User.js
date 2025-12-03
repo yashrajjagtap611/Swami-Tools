@@ -8,6 +8,7 @@ const loginHistorySchema = new mongoose.Schema({
 
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true, trim: true },
+  email: { type: String, unique: true, lowercase: true, trim: true },
   passwordHash: { type: String, required: true },
   isAdmin: { type: Boolean, default: false },
   isActive: { type: Boolean, default: true },

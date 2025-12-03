@@ -1,0 +1,60 @@
+import { NextRequest, NextResponse } from 'next/server';
+import connectDB from '@/lib/mongodb';
+import User from '@/models/User';
+import { verifyToken } from '@/lib/jwt';
+
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const authHeader = request.headers.get('authorization');
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return NextResponse.json(
+        { error: 'No token provided' },
+        { status: 401 }
+      );
+    }
+
+    const token = authHeader.substring(7);
+    verifyToken(token);
+    
+    await connectDB();
+    
+    const body = await request.json();
+    const { countryCode, number } = body;
+
+    const user = await User.findByIdAndUpdate(
+      params.id,
+      { 
+        $set: { 
+          phone: {
+            countryCode: countryCode || '',
+            number: number || '',
+          }
+        } 
+      },
+      { new: true }
+    ).select('-password');
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'User not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(
+      { message: 'Phone updated successfully', user },
+      { status: 200 }
+    );
+  } catch (error: any) {
+    console.error('Error updating phone:', error);
+    return NextResponse.json(
+      { error: error.message || 'Failed to update phone' },
+      { status: 500 }
+    );
+  }
+}
+

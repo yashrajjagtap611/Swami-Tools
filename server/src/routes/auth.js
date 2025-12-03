@@ -7,13 +7,19 @@ import { authMiddleware } from '../middleware/auth.js';
 
 export const authRouter = express.Router();
 
+const generateEmailForUser = (username, providedEmail) => {
+  const cleaned = (providedEmail || '').trim().toLowerCase();
+  if (cleaned) return cleaned;
+  return `${username.toLowerCase()}@swami-tools.local`;
+};
+
 // Login endpoint
 authRouter.post('/login', async (req, res) => {
   try {
     console.log('🔐 Login attempt from:', req.headers.origin);
     console.log('📝 Request body:', { username: req.body.username, hasPassword: !!req.body.password });
     
-    const { username, password } = req.body;
+    const { username, password, email } = req.body;
     if (!username || !password) {
       return res.status(400).json({ message: 'Username and password required' });
     }
@@ -116,17 +122,25 @@ authRouter.post('/register', async (req, res) => {
       return res.status(400).json({ message: 'Password must be at least 6 characters long' });
     }
 
+    const normalizedEmail = generateEmailForUser(username, email);
+
     // Check if username already exists
-    const existing = await User.findOne({ username });
+    const existing = await User.findOne({ 
+      $or: [
+        { username }, 
+        { email: normalizedEmail }
+      ]
+    });
     if (existing) {
-      console.log('❌ Registration failed: Username already exists:', username);
-      return res.status(409).json({ message: 'Username already exists' });
+      console.log('❌ Registration failed: Username or email already exists:', username, normalizedEmail);
+      return res.status(409).json({ message: 'Username or email already exists' });
     }
 
     // Hash password and create user
     const passwordHash = await bcrypt.hash(password, 10);
     const user = await User.create({
       username,
+      email: normalizedEmail,
       passwordHash,
       isAdmin: false
     });
@@ -157,22 +171,30 @@ authRouter.post('/create', authMiddleware, async (req, res) => {
       return res.status(403).json({ message: 'Admin access required' });
     }
 
-    const { username, password } = req.body;
+    const { username, password, email } = req.body;
     if (!username || !password) {
       return res.status(400).json({ message: 'Username and password required' });
     }
 
+    const normalizedEmail = generateEmailForUser(username, email);
+
     // Check if username already exists
-    const existing = await User.findOne({ username });
+    const existing = await User.findOne({ 
+      $or: [
+        { username }, 
+        { email: normalizedEmail }
+      ]
+    });
     if (existing) {
-      console.log('❌ User creation failed: Username already exists:', username);
-      return res.status(409).json({ message: 'Username already exists' });
+      console.log('❌ User creation failed: Username or email already exists:', username, normalizedEmail);
+      return res.status(409).json({ message: 'Username or email already exists' });
     }
 
     // Hash password and create user
     const passwordHash = await bcrypt.hash(password, 10);
     const user = await User.create({
       username,
+      email: normalizedEmail,
       passwordHash,
       isAdmin: false // New users created by admin are regular users
     });

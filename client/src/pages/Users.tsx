@@ -54,6 +54,7 @@ import { config } from '../config/env';
 interface User {
   _id: string;
   username: string;
+  email?: string;
   isAdmin: boolean;
   isActive: boolean;
   expiryDate?: string;
@@ -157,9 +158,13 @@ const Users: React.FC = () => {
     }
   };
 
-  const filteredUsers = users.filter(u =>
-    u.username.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const normalizedSearch = searchTerm.trim().toLowerCase();
+  const filteredUsers = users.filter(u => {
+    if (!normalizedSearch) return true;
+    const username = (u?.username || '').toLowerCase();
+    const email = (u?.email || '').toLowerCase();
+    return username.includes(normalizedSearch) || email.includes(normalizedSearch);
+  });
 
   const handleWhatsApp = (user: User) => {
     try {

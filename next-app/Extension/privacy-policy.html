@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - Swami Tools</title>
+    <style>
+        /* ========================================
+           PRIVACY POLICY STYLES
+           ======================================== */
+        
+        :root {
+            --primary-color: #4caf50;
+            --primary-dark: #388e3c;
+            --primary-light: #81c784;
+            --secondary-color: #2196f3;
+            --secondary-dark: #1976d2;
+            --accent-color: #ff9800;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --error-color: #f44336;
+            --info-color: #2196f3;
+            --background-color: #f8f9fa;
+            --surface-color: #ffffff;
+            --text-primary: #212121;
+            --text-secondary: #757575;
+            --border-color: #e0e0e0;
+            --shadow: 0 2px 8px rgba(0,0,0,0.1);
+            --shadow-hover: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+            line-height: 1.7;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px;
+            color: var(--text-primary);
+            background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: var(--surface-color);
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: var(--shadow);
+            border: 2px solid var(--border-color);
+        }
+        
+        h1 { 
+            color: var(--primary-color);
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 8px;
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 16px;
+        }
+        
+        h1::before {
+            content: '🔒';
+            margin-right: 12px;
+            font-size: 36px;
+        }
+        
+        h2 { 
+            color: var(--secondary-color);
+            margin-top: 40px;
+            margin-bottom: 16px;
+            font-size: 24px;
+            font-weight: 700;
+            border-left: 4px solid var(--secondary-color);
+            padding-left: 16px;
+        }
+        
+        h3 {
+            color: var(--text-primary);
+            font-size: 18px;
+            font-weight: 600;
+            margin: 16px 0 8px 0;
+        }
+        
+        .last-updated { 
+            color: var(--text-secondary);
+            font-style: italic;
+            text-align: center;
+            font-size: 14px;
+            margin-bottom: 32px;
+        }
+        
+        .contact-info { 
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 24px 0;
+            border: 2px solid var(--border-color);
+            box-shadow: var(--shadow);
+        }
+        
+        p {
+            margin-bottom: 16px;
+            font-size: 16px;
+        }
+        
+        ul, ol {
+            margin-bottom: 16px;
+            padding-left: 24px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        
+        .notice {
+            background: linear-gradient(135deg, #e8f5e8, #f1f8e9);
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 24px 0;
+            box-shadow: var(--shadow);
+        }
+        
+        .warning-notice {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            border: 2px solid var(--warning-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 24px 0;
+            box-shadow: var(--shadow);
+        }
+        
+        .info-notice {
+            background: linear-gradient(135deg, #e3f2fd, #e1f5fe);
+            border: 2px solid var(--info-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 24px 0;
+            box-shadow: var(--shadow);
+        }
+        
+        strong {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+        
+        a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        
+        a:hover {
+            color: var(--secondary-dark);
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Privacy Policy</h1>
+        <p class="last-updated">Last updated: October 28, 2025</p>
+
+        <div class="notice">
+            <h3 style="color: #2e7d32; margin-top: 0;">Important Notice</h3>
+            <p style="color: #2e7d32; margin-bottom: 0;">This Chrome extension ("Session Manager") is designed to help users manage their own browser session cookies for legitimate websites they have access to. This Privacy Policy comprehensively describes all data we collect, how we use it, how we store it, and with whom we share it.</p>
+        </div>
+
+        <h2>1. Introduction</h2>
+        <p>Swami Tools ("we", "our", or "us") operates the Session Manager Chrome Extension (the "Extension"). This Privacy Policy explains our practices regarding the collection, use, storage, and disclosure of personal information when you use our Extension.</p>
+        
+        <p><strong>By using the Extension, you agree to the collection and use of information in accordance with this policy.</strong> If you do not agree with this policy, please do not use the Extension.</p>
+
+        <h2>2. Data Collection - What We Collect</h2>
+        <p>We collect and process the following categories of user data:</p>
+        
+        <h3>2.1 Personal Account Information</h3>
+        <ul>
+            <li><strong>Username:</strong> Collected when you create an account to identify your account</li>
+            <li><strong>Password:</strong> Collected and stored in hashed (encrypted) form only; we cannot see your actual password</li>
+            <li><strong>Account Status:</strong> Information about your account type, plan status, plan expiration date, and whether you have administrative privileges</li>
+        </ul>
+        
+        <h3>2.2 Device and Session Information</h3>
+        <ul>
+            <li><strong>Unique Device ID:</strong> A randomly generated identifier to track which device you're using (format: ext_[random]_[timestamp])</li>
+            <li><strong>Browser Information:</strong> User agent string, browser platform (Windows/Mac/Linux), browser type and version</li>
+            <li><strong>Extension Version:</strong> The version number of the Extension you have installed</li>
+            <li><strong>Session Tokens:</strong> Authentication tokens that prove your identity and maintain your logged-in session</li>
+            <li><strong>Login Timestamps:</strong> Date and time when you log in, log out, or your session expires</li>
+        </ul>
+        
+        <h3>2.3 Browser Cookies and Website Session Data</h3>
+        <ul>
+            <li><strong>Session Cookies:</strong> The Extension accesses, reads, modifies, and stores browser cookies for websites you have been granted access to. This includes cookie names, values, domains, paths, expiration dates, and security flags (secure, httpOnly, sameSite)</li>
+            <li><strong>Cookie Backups:</strong> If you choose to upload cookie backups to our servers, we store these cookie collections associated with your account</li>
+            <li><strong>Website Permissions:</strong> A list of which websites you have been granted access to by administrators</li>
+            <li><strong>Cookie Insertion Records:</strong> Logs of when you applied cookies to websites, including timestamps and which website</li>
+        </ul>
+        
+        <h3>2.4 Browser Activity and Usage Data</h3>
+        <ul>
+            <li><strong>Active Tab Information:</strong> URL, title, and tab ID of the currently active browser tab when you use the Extension</li>
+            <li><strong>Feature Usage:</strong> Which Extension features you use (login, cookie insertion, cookie upload, etc.)</li>
+            <li><strong>Extension Interactions:</strong> When you open the Extension popup, click buttons, or interact with Extension pages</li>
+            <li><strong>Error Logs:</strong> Information about errors or failures when using the Extension</li>
+        </ul>
+        
+        <h3>2.5 Chrome API Permissions Used</h3>
+        <p>The Extension requests and uses the following Chrome permissions, which allow us to collect and access data:</p>
+        <ul>
+            <li><strong>cookies:</strong> Allows us to read, modify, and delete cookies for websites you access</li>
+            <li><strong>storage:</strong> Allows us to store data locally on your device (tokens, settings, device ID)</li>
+            <li><strong>tabs:</strong> Allows us to access information about your browser tabs and open/reload tabs</li>
+            <li><strong>activeTab:</strong> Allows us to access the currently active tab's URL and reload it</li>
+            <li><strong>host_permissions (https:///*/*):</strong> Allows us to access and modify cookies across all HTTPS websites</li>
+        </ul>
+
+        <h3>2.6 Data NOT Collected</h3>
+        <p>For transparency, we want to clarify what we DO NOT collect:</p>
+        <ul>
+            <li>We do NOT collect your browsing history beyond the current active tab when you use the Extension</li>
+            <li>We do NOT collect passwords from websites (only cookies)</li>
+            <li>We do NOT track your browsing activity outside of Extension usage</li>
+            <li>We do NOT collect payment card information directly (handled by third-party payment processors if applicable)</li>
+            <li>We do NOT sell or rent your personal data to third parties for marketing purposes</li>
+        </ul>
+
+        <h2>3. How We Use Your Data</h2>
+        <p>We use the collected data for the following specific purposes:</p>
+        
+        <h3>3.1 Core Functionality</h3>
+        <ul>
+            <li><strong>Session Cookie Management:</strong> To read, store, apply, and manage browser cookies for authorized websites</li>
+            <li><strong>User Authentication:</strong> To verify your identity and maintain secure logged-in sessions</li>
+            <li><strong>Account Management:</strong> To create, manage, and maintain your user account</li>
+            <li><strong>Access Control:</strong> To enforce which websites you are permitted to access and manage cookies for</li>
+            <li><strong>Multi-Device Management:</strong> To track which devices you're logged in on and enforce device limits</li>
+            <li><strong>Plan and Subscription Management:</strong> To track your subscription plan, expiration dates, and enforce plan limits</li>
+        </ul>
+
+        <h3>3.2 Service Improvement and Support</h3>
+        <ul>
+            <li><strong>Technical Support:</strong> To diagnose and resolve technical issues you report</li>
+            <li><strong>Service Optimization:</strong> To analyze how features are used and improve Extension performance</li>
+            <li><strong>Compatibility Testing:</strong> To ensure the Extension works across different browsers and operating systems</li>
+            <li><strong>Error Detection:</strong> To identify, log, and fix bugs or errors in the Extension</li>
+        </ul>
+
+        <h3>3.3 Security and Compliance</h3>
+        <ul>
+            <li><strong>Security Monitoring:</strong> To detect and prevent unauthorized access or abuse</li>
+            <li><strong>Session Validation:</strong> To verify session integrity and detect forced logouts</li>
+            <li><strong>Compliance Enforcement:</strong> To ensure users comply with Terms of Service</li>
+            <li><strong>Audit Logging:</strong> To maintain records of cookie insertions and access for security purposes</li>
+        </ul>
+        
+        <h3>3.4 Communication</h3>
+        <ul>
+            <li><strong>Service Notifications:</strong> To notify you about plan expiration, session expiry, or important service changes</li>
+            <li><strong>Security Alerts:</strong> To alert you about unusual activity or forced logouts from other devices</li>
+            <li><strong>Updates and Announcements:</strong> To inform you about new features or updates to the Extension</li>
+        </ul>
+
+        <h2>4. Data Storage and Security</h2>
+        <p>We implement the following storage and security measures:</p>
+        
+        <h3>4.1 Local Storage on Your Device</h3>
+        <ul>
+            <li><strong>Chrome Local Storage API:</strong> Session tokens, device IDs, user information, and Extension settings are stored locally on your device using Chrome's secure storage APIs (chrome.storage.local)</li>
+            <li><strong>Cookie Data:</strong> The Extension stores cookies directly in your browser's cookie storage using Chrome's Cookies API</li>
+            <li><strong>Access:</strong> This local data remains on your device and is only accessible to the Extension</li>
+            <li><strong>Persistence:</strong> Local data persists until you uninstall the Extension or clear your browser data</li>
+        </ul>
+        
+        <h3>4.2 Remote Server Storage</h3>
+        <ul>
+            <li><strong>Server Location:</strong> Our backend server is hosted on Render.com (cloud hosting provider)</li>
+            <li><strong>Server URL:</strong> https://swami-tools-server.onrender.com</li>
+            <li><strong>Database:</strong> User accounts, cookie backups, and session data are stored in a MongoDB database hosted on MongoDB Atlas</li>
+            <li><strong>Stored Data Includes:</strong>
+                <ul>
+                    <li>User account information (username, hashed password, account status, plan details)</li>
+                    <li>Cookie backups you choose to upload</li>
+                    <li>Website permission assignments</li>
+                    <li>Device session records</li>
+                    <li>Activity logs (login times, cookie insertions)</li>
+                </ul>
+            </li>
+        </ul>
+        
+        <h3>4.3 Security Measures</h3>
+        <ul>
+            <li><strong>Encryption in Transit:</strong> All data transmitted between the Extension and our servers uses HTTPS/TLS encryption</li>
+            <li><strong>Password Security:</strong> Passwords are hashed using industry-standard bcrypt hashing before storage; we cannot see your actual password</li>
+            <li><strong>Authentication:</strong> We use JWT (JSON Web Tokens) for secure session authentication</li>
+            <li><strong>Access Control:</strong> Server-side access controls limit who can access what data</li>
+            <li><strong>Session Management:</strong> Sessions expire after a set period and are validated every 30 seconds</li>
+            <li><strong>Device Limiting:</strong> We enforce device limits to prevent unauthorized account sharing</li>
+        </ul>
+        
+        <h3>4.4 Data Security Limitations</h3>
+        <p>While we implement reasonable security measures, please note:</p>
+        <ul>
+            <li>No method of transmission over the Internet or electronic storage is 100% secure</li>
+            <li>You are responsible for keeping your username and password confidential</li>
+            <li>Cookie data contains sensitive session information; ensure you only upload cookies for accounts you own</li>
+        </ul>
+
+        <h2>5. Data Sharing and Disclosure</h2>
+        <p><strong>We do not sell, trade, or rent your personal information to third parties for marketing purposes.</strong></p>
+        
+        <h3>5.1 Third-Party Service Providers Who Receive Your Data</h3>
+        <p>We share your data with the following third-party service providers to operate our service:</p>
+        
+        <h4>A. Render.com (Hosting Provider)</h4>
+        <ul>
+            <li><strong>Data Shared:</strong> All server-stored data passes through Render.com's infrastructure</li>
+            <li><strong>Purpose:</strong> Cloud hosting and infrastructure for our backend server</li>
+            <li><strong>Location:</strong> United States (may vary based on server region)</li>
+            <li><strong>Privacy Policy:</strong> https://render.com/privacy</li>
+        </ul>
+        
+        <h4>B. MongoDB Atlas (Database Provider)</h4>
+        <ul>
+            <li><strong>Data Shared:</strong> User accounts, cookie backups, session records, and all persistent data</li>
+            <li><strong>Purpose:</strong> Database storage and management</li>
+            <li><strong>Location:</strong> Varies by database region configuration</li>
+            <li><strong>Privacy Policy:</strong> https://www.mongodb.com/legal/privacy-policy</li>
+        </ul>
+        
+        <h4>C. Payment Processors (If Applicable)</h4>
+        <ul>
+            <li><strong>Data Shared:</strong> Billing name, payment card information, transaction amount</li>
+            <li><strong>Purpose:</strong> Processing subscription payments (if/when payment features are enabled)</li>
+            <li><strong>Note:</strong> We do NOT directly handle or store payment card information; it is processed directly by the payment processor</li>
+            <li><strong>Processors:</strong> Will be specified when payment features are implemented</li>
+        </ul>
+        
+        <h3>5.2 Other Data Sharing Circumstances</h3>
+        <p>We may also share your data in these situations:</p>
+        <ul>
+            <li><strong>With Your Explicit Consent:</strong> When you specifically authorize us to share your information</li>
+            <li><strong>Legal Requirements:</strong> When required by law, court order, subpoena, or other legal process</li>
+            <li><strong>Law Enforcement:</strong> In response to valid requests by public authorities (e.g., police, government agencies)</li>
+            <li><strong>Protection of Rights:</strong> When necessary to:
+                <ul>
+                    <li>Protect our legal rights, property, or safety</li>
+                    <li>Protect the safety of our users or the public</li>
+                    <li>Prevent fraud, security issues, or technical problems</li>
+                    <li>Enforce our Terms of Service</li>
+                </ul>
+            </li>
+            <li><strong>Business Transfers:</strong> If we undergo a merger, acquisition, bankruptcy, or sale of assets, your information may be transferred to the new entity</li>
+        </ul>
+
+        <h3>5.3 Data Sharing - What We DO NOT Do</h3>
+        <ul>
+            <li>We do NOT sell your personal data to advertisers or data brokers</li>
+            <li>We do NOT share your cookie data with other users</li>
+            <li>We do NOT provide your data to third parties for their marketing purposes</li>
+            <li>We do NOT share data with social media platforms or analytics providers</li>
+        </ul>
+
+        <h2>6. Data Retention - How Long We Keep Your Data</h2>
+        <p>We retain different types of data for different periods:</p>
+        
+        <h3>6.1 Local Data on Your Device</h3>
+        <ul>
+            <li><strong>Session Tokens and Settings:</strong> Retained indefinitely on your device until you:
+                <ul>
+                    <li>Uninstall the Extension</li>
+                    <li>Clear your browser data</li>
+                    <li>Manually delete them through the Extension</li>
+                </ul>
+            </li>
+            <li><strong>Cookies:</strong> Retained in your browser's cookie storage until they expire or you delete them</li>
+        </ul>
+
+        <h3>6.2 Server-Stored Data</h3>
+        <ul>
+            <li><strong>Active Account Data:</strong> Retained while your account is active and for as long as you continue using the service</li>
+            <li><strong>Cookie Backups:</strong> Retained until you:
+                <ul>
+                    <li>Manually delete them through the Extension</li>
+                    <li>Request account deletion</li>
+                    <li>Your account is terminated for Terms of Service violations</li>
+                </ul>
+            </li>
+            <li><strong>Session Records:</strong> Active session data is retained until:
+                <ul>
+                    <li>You log out</li>
+                    <li>Your session expires (typically 24-48 hours of inactivity)</li>
+                    <li>You are logged out from another device</li>
+                </ul>
+            </li>
+            <li><strong>Activity Logs:</strong> Logs of cookie insertions and access may be retained for up to 90 days for security and troubleshooting purposes</li>
+        </ul>
+
+        <h3>6.3 After Account Deletion</h3>
+        <p>When you request account deletion:</p>
+        <ul>
+            <li><strong>Immediate Deletion:</strong> Account credentials, cookie backups, and personal settings are deleted immediately</li>
+            <li><strong>Log Data:</strong> Activity logs may be retained for up to 30 days for security auditing, then permanently deleted</li>
+            <li><strong>Backup Systems:</strong> Data may persist in backup systems for up to 30 days before being permanently purged</li>
+            <li><strong>Legal Retention:</strong> If legally required, certain data may be retained longer to comply with legal obligations</li>
+        </ul>
+        
+        <h3>6.4 Inactive Accounts</h3>
+        <ul>
+            <li><strong>Expired Plans:</strong> If your plan expires and you do not renew, cookie data is retained for 30 days to allow for renewal, then automatically deleted</li>
+            <li><strong>Inactive Accounts:</strong> Accounts inactive for more than 1 year may be subject to deletion after email notification</li>
+        </ul>
+
+        <h2>7. Your Data Protection Rights</h2>
+        <p>You have the following rights regarding your personal data. The availability of certain rights may vary depending on your location (e.g., GDPR for EU residents, CCPA for California residents):</p>
+        
+        <h3>7.1 Access and Portability Rights</h3>
+        <ul>
+            <li><strong>Right to Access:</strong> You can request a copy of all personal data we hold about you</li>
+            <li><strong>Right to Data Portability:</strong> You can request your data in a structured, machine-readable format (JSON) to transfer to another service</li>
+            <li><strong>How to Exercise:</strong> Contact us at the email provided in Section 10, or export your cookie backups through the Extension interface</li>
+        </ul>
+        
+        <h3>7.2 Correction and Deletion Rights</h3>
+        <ul>
+            <li><strong>Right to Rectification:</strong> You can request correction of inaccurate or incomplete personal data</li>
+            <li><strong>Right to Erasure ("Right to be Forgotten"):</strong> You can request deletion of your personal data, including:
+                <ul>
+                    <li>Complete account deletion</li>
+                    <li>Deletion of specific cookie backups</li>
+                    <li>Deletion of activity logs</li>
+                </ul>
+            </li>
+            <li><strong>How to Exercise:</strong> Request account deletion through the Extension settings or contact us directly</li>
+        </ul>
+        
+        <h3>7.3 Control and Restriction Rights</h3>
+        <ul>
+            <li><strong>Right to Restrict Processing:</strong> You can request limitation of how we process your data</li>
+            <li><strong>Right to Object:</strong> You can object to processing of your personal data for certain purposes</li>
+            <li><strong>Right to Withdraw Consent:</strong> You can withdraw consent for data processing at any time by:
+                <ul>
+                    <li>Uninstalling the Extension</li>
+                    <li>Logging out and deleting your account</li>
+                    <li>Revoking Chrome permissions granted to the Extension</li>
+                </ul>
+            </li>
+        </ul>
+        
+        <h3>7.4 Additional Rights (Location-Dependent)</h3>
+        <ul>
+            <li><strong>California Residents (CCPA):</strong> Right to opt-out of sale of personal information (note: we do not sell personal information)</li>
+            <li><strong>EU Residents (GDPR):</strong> Right to lodge a complaint with your local data protection authority</li>
+            <li><strong>Right to Non-Discrimination:</strong> We will not discriminate against you for exercising your privacy rights</li>
+        </ul>
+
+        <h3>7.5 How to Exercise Your Rights</h3>
+        <p>To exercise any of these rights:</p>
+        <ol>
+            <li>Send an email to the contact address in Section 10 with your request</li>
+            <li>Include your username and a description of your request</li>
+            <li>We will verify your identity and respond within 30 days (or as required by applicable law)</li>
+            <li>Some requests may be fulfilled immediately through the Extension interface</li>
+        </ol>
+        
+        <h3>7.6 Limitations on Rights</h3>
+        <p>In some cases, we may be unable to fulfill your request if:</p>
+        <ul>
+            <li>Required by law to retain certain data</li>
+            <li>Necessary to complete a transaction you requested</li>
+            <li>Needed for security, fraud prevention, or legal claims</li>
+            <li>Required to comply with legal obligations</li>
+        </ul>
+
+        <h2>8. International Data Transfers</h2>
+        <p>Your data may be transferred to and processed in countries other than your own:</p>
+        <ul>
+            <li><strong>Server Location:</strong> Our servers are primarily located in the United States (via Render.com)</li>
+            <li><strong>Database Location:</strong> MongoDB Atlas databases may be located in various regions worldwide</li>
+            <li><strong>Data Protection:</strong> We use HTTPS/TLS encryption for all data transfers and comply with applicable data protection laws</li>
+            <li><strong>EU Users:</strong> If you are located in the European Economic Area (EEA), your data may be transferred outside the EEA. We rely on appropriate safeguards such as:
+                <ul>
+                    <li>Standard contractual clauses</li>
+                    <li>Service providers' compliance with EU-US Data Privacy Framework (where applicable)</li>
+                    <li>Appropriate security measures</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h2>9. Children's Privacy</h2>
+        <p><strong>Age Restriction:</strong> Our Extension is not intended for children under the age of 13 (or 16 in the EU).</p>
+        <ul>
+            <li>We do not knowingly collect personally identifiable information from children under the applicable age</li>
+            <li>If you are a parent or guardian and believe your child has provided us with personal information, please contact us immediately</li>
+            <li>If we discover that a child under the applicable age has provided us with personal information, we will delete it immediately from our servers</li>
+            <li>We may request proof of age or parental consent if we have reason to believe a user may be underage</li>
+        </ul>
+
+        <h2>10. Cookies and Tracking Technologies</h2>
+        <p>This Extension's <strong>primary function</strong> is to manage browser cookies. Here's how we use cookies and tracking:</p>
+        
+        <h3>10.1 Extension's Core Function - Cookie Management</h3>
+        <ul>
+            <li>The Extension is specifically designed to access, read, modify, store, and apply browser cookies</li>
+            <li>You explicitly grant permission for cookie access when you install the Extension</li>
+            <li>Cookies managed by the Extension include session cookies, authentication tokens, and website preferences</li>
+            <li>The Extension can access cookies for any HTTPS website you visit (per the host_permissions)</li>
+        </ul>
+        
+        <h3>10.2 Our Own Tracking</h3>
+        <ul>
+            <li><strong>Session Cookies:</strong> We use authentication tokens (JWT) to maintain your logged-in session in the Extension</li>
+            <li><strong>Local Storage:</strong> We store your device ID and settings in Chrome's local storage</li>
+            <li><strong>No Third-Party Analytics:</strong> We do not use Google Analytics, Facebook Pixel, or other third-party tracking tools</li>
+            <li><strong>No Cross-Site Tracking:</strong> We do not track your browsing activity across different websites</li>
+        </ul>
+
+        <h2>11. Changes to This Privacy Policy</h2>
+        <p>We may update our Privacy Policy from time to time to reflect changes in our practices, legal requirements, or service features.</p>
+        
+        <h3>11.1 Notification of Changes</h3>
+        <ul>
+            <li><strong>Last Updated Date:</strong> We will update the "Last updated" date at the top of this policy</li>
+            <li><strong>Material Changes:</strong> For significant changes that affect your rights, we will:
+                <ul>
+                    <li>Display a prominent notice in the Extension</li>
+                    <li>Require you to review and accept the new policy before continuing to use the Extension</li>
+                    <li>Send notification through the Extension popup (if possible)</li>
+                </ul>
+            </li>
+            <li><strong>Review:</strong> You are advised to review this Privacy Policy periodically</li>
+            <li><strong>Continued Use:</strong> Your continued use of the Extension after changes constitutes acceptance of the new Privacy Policy</li>
+        </ul>
+        
+        <h3>11.2 Version History</h3>
+        <ul>
+            <li>October 28, 2025: Comprehensive update to comply with Chrome Web Store policies - detailed all data collection, handling, storage, and sharing practices</li>
+            <li>October 13, 2025: Initial privacy policy</li>
+        </ul>
+
+        <h2>12. Legal Basis for Processing (GDPR)</h2>
+        <p>If you are located in the European Economic Area (EEA), we process your personal data based on the following legal grounds:</p>
+        <ul>
+            <li><strong>Consent:</strong> You provide consent when you install the Extension, create an account, and grant Chrome permissions</li>
+            <li><strong>Contract Performance:</strong> Processing is necessary to provide the Extension services you requested</li>
+            <li><strong>Legitimate Interests:</strong> We have legitimate interests in:
+                <ul>
+                    <li>Preventing fraud and ensuring security</li>
+                    <li>Improving and optimizing our service</li>
+                    <li>Troubleshooting technical issues</li>
+                </ul>
+            </li>
+            <li><strong>Legal Obligations:</strong> Processing may be required to comply with legal requirements</li>
+        </ul>
+
+        <h2>13. Contact Us</h2>
+        <div class="contact-info">
+            <p>If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact us:</p>
+            
+            <h3>Primary Contact</h3>
+            <p><strong>Email:</strong> <a href="mailto:privacy@swamitools.com">privacy@swamitools.com</a></p>
+            <p><strong>Extension Name:</strong> Session Manager</p>
+            <p><strong>Developer:</strong> Swami Tools</p>
+            
+            <h3>Response Time</h3>
+            <p>We aim to respond to all privacy-related inquiries within:</p>
+            <ul>
+                <li><strong>General inquiries:</strong> 7 business days</li>
+                <li><strong>Data access/deletion requests:</strong> 30 days (as required by law)</li>
+                <li><strong>Security concerns:</strong> 48 hours</li>
+            </ul>
+            
+            <h3>What to Include in Your Request</h3>
+            <ul>
+                <li>Your username (if applicable)</li>
+                <li>Clear description of your request or concern</li>
+                <li>Specific data you're inquiring about (if applicable)</li>
+                <li>Any supporting documentation</li>
+            </ul>
+        </div>
+        
+        <div class="info-notice">
+            <h3 style="color: #1565c0; margin-top: 0;">Additional Resources</h3>
+            <p><strong>Chrome Web Store Policies:</strong> <a href="https://developer.chrome.com/docs/webstore/program-policies/" target="_blank">Chrome Web Store Developer Program Policies</a></p>
+            <p><strong>Google Privacy Policy:</strong> <a href="https://policies.google.com/privacy" target="_blank">https://policies.google.com/privacy</a></p>
+            <p><strong>Your Browser Privacy Controls:</strong> Chrome Settings → Privacy and Security → Site Settings → Cookies</p>
+        </div>
+    </div>
+</body>
+</html>

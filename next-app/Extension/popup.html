@@ -1,0 +1,450 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      /* ========================================
+         🎓 EDUCATIONAL EXTENSION STYLES
+         ======================================== */
+      
+      :root {
+        --primary-color: #4caf50;
+        --primary-dark: #388e3c;
+        --primary-light: #81c784;
+        --secondary-color: #2196f3;
+        --secondary-dark: #1976d2;
+        --accent-color: #ff9800;
+        --success-color: #4caf50;
+        --warning-color: #ff9800;
+        --error-color: #f44336;
+        --info-color: #2196f3;
+        --background-color: #f8f9fa;
+        --surface-color: #ffffff;
+        --text-primary: #212121;
+        --text-secondary: #757575;
+        --border-color: #e0e0e0;
+        --shadow: 0 2px 8px rgba(0,0,0,0.1);
+        --shadow-hover: 0 4px 12px rgba(0,0,0,0.15);
+      }
+      
+      body { 
+        font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; 
+        margin: 0;
+        padding: 8px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+        color: var(--text-primary);
+        min-height: 100vh;
+        box-sizing: border-box;
+        width: 100%;
+      }
+      
+      .container {
+        background: var(--surface-color);
+        border-radius: 12px;
+        padding: 16px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border-color);
+        width: 100%;
+        max-width: 450px;
+        min-width: 350px;
+        margin: 0 auto;
+        box-sizing: border-box;
+      }
+      
+      button { 
+        padding: 10px 14px; 
+        border: 2px solid var(--primary-color); 
+        border-radius: 8px; 
+        background: var(--primary-color); 
+        color: white;
+        cursor: pointer; 
+        width: 100%; 
+        margin-top: 8px;
+        transition: all 0.3s ease;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        box-shadow: var(--shadow);
+        box-sizing: border-box;
+      }
+      
+      button:hover { 
+        background: var(--primary-dark);
+        border-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-hover);
+      }
+      
+      button.primary {
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+        border: 2px solid var(--primary-color);
+        color: white;
+      }
+      
+      button.primary:hover {
+        background: linear-gradient(135deg, var(--primary-dark), #2e7d32);
+        border-color: var(--primary-dark);
+      }
+      
+      button.secondary {
+        background: linear-gradient(135deg, var(--secondary-color), var(--secondary-dark));
+        border: 2px solid var(--secondary-color);
+        color: white;
+      }
+      
+      button.secondary:hover {
+        background: linear-gradient(135deg, var(--secondary-dark), #1565c0);
+        border-color: var(--secondary-dark);
+      }
+      
+      input { 
+        width: 100%; 
+        margin: 8px 0; 
+        padding: 12px 16px; 
+        box-sizing: border-box; 
+        border: 2px solid var(--border-color); 
+        border-radius: 8px;
+        font-size: 14px;
+        background: var(--surface-color);
+        transition: all 0.3s ease;
+      }
+      
+      input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        transform: translateY(-1px);
+      }
+      h3 { 
+        margin: 0 0 12px; 
+        font-size: 16px; 
+        color: var(--text-primary);
+        padding-bottom: 8px;
+        border-bottom: 2px solid var(--primary-color);
+        font-weight: 700;
+        text-align: center;
+        position: relative;
+      }
+      
+      h3::before {
+        content: '🎓';
+        margin-right: 6px;
+        font-size: 18px;
+      }
+      
+      .section {
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 12px;
+      }
+      
+      .section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+      }
+      
+      .status { 
+        font-size: 12px; 
+        margin-top: 8px; 
+        padding: 8px 12px; 
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+        box-shadow: var(--shadow);
+        border: 2px solid transparent;
+      }
+      
+      .success { 
+        background: linear-gradient(135deg, #e8f5e8, #f1f8e9); 
+        color: var(--success-color);
+        border-color: var(--success-color);
+      }
+      
+      .error { 
+        background: linear-gradient(135deg, #ffebee, #fce4ec); 
+        color: var(--error-color);
+        border-color: var(--error-color);
+      }
+      
+      .info {
+        background: linear-gradient(135deg, #e3f2fd, #e1f5fe);
+        color: var(--info-color);
+        border-color: var(--info-color);
+      }
+      
+      .warning {
+        background: linear-gradient(135deg, #fff3e0, #fce4ec);
+        color: var(--warning-color);
+        border-color: var(--warning-color);
+      }
+      .user-list {
+        max-height: 300px;
+        overflow-y: auto;
+        margin: 16px 0;
+        border-radius: 8px;
+        border: 2px solid var(--border-color);
+        background: var(--surface-color);
+      }
+      
+      .user-item {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.3s ease;
+        background: var(--surface-color);
+      }
+      
+      .user-item:hover {
+        background: var(--background-color);
+        transform: translateX(4px);
+      }
+      
+      .user-item:last-child {
+        border-bottom: none;
+      }
+      
+      .cookie-info {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        padding: 16px;
+        margin: 16px 0;
+        font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+        font-size: 13px;
+        max-height: 200px;
+        overflow-y: auto;
+        box-shadow: var(--shadow);
+      }
+      
+      .cookie-info h4 {
+        margin: 0 0 12px 0;
+        color: var(--text-primary);
+        font-weight: 600;
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 8px;
+      }
+      
+      .cookie-info ul {
+        margin: 0;
+        padding-left: 20px;
+      }
+      
+      .cookie-info li {
+        margin-bottom: 6px;
+        word-break: break-all;
+        color: var(--text-secondary);
+      }
+      .single-device-info {
+        background: linear-gradient(135deg, #e3f2fd, #e1f5fe);
+        border: 2px solid var(--info-color);
+        color: var(--info-color);
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin: 12px 0;
+        font-size: 13px;
+        text-align: center;
+        font-weight: 500;
+        box-shadow: var(--shadow);
+      }
+      
+      .device-status {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border: 1px solid var(--border-color);
+        padding: 6px 10px;
+        border-radius: 4px;
+        margin: 4px 0;
+        font-size: 11px;
+        color: var(--text-secondary);
+        font-weight: 500;
+        box-shadow: var(--shadow);
+      }
+      
+      .plan-status {
+        background: linear-gradient(135deg, #e8f5e8, #f1f8e9);
+        border: 1px solid var(--success-color);
+        padding: 6px 10px;
+        border-radius: 4px;
+        margin: 4px 0;
+        font-size: 11px;
+        color: var(--success-color);
+        font-weight: 600;
+        box-shadow: var(--shadow);
+      }
+      
+      .plan-status.expired {
+        background: linear-gradient(135deg, #ffebee, #fce4ec);
+        border-color: var(--error-color);
+        color: var(--error-color);
+      }
+      
+      .plan-status.warning {
+        background: linear-gradient(135deg, #fff3e0, #fce4ec);
+        border-color: var(--warning-color);
+        color: var(--warning-color);
+      }
+      
+      /* Educational notice styles */
+      .educational-notice {
+        background: linear-gradient(135deg, #e8f5e8, #f1f8e9);
+        border: 1px solid var(--primary-color);
+        border-radius: 6px;
+        padding: 10px;
+        margin: 8px 0;
+        box-shadow: var(--shadow);
+      }
+      
+      .educational-notice h4 {
+        color: var(--primary-color);
+        margin: 0 0 6px 0;
+        font-weight: 700;
+        font-size: 14px;
+      }
+      
+      .educational-notice p {
+        color: var(--text-primary);
+        margin: 0 0 6px 0;
+        line-height: 1.4;
+        font-size: 12px;
+      }
+      
+      .educational-notice .warning-text {
+        background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+        border: 1px solid var(--warning-color);
+        color: var(--warning-color);
+        padding: 6px 8px;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 600;
+        margin: 6px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Privacy Consent Notice -->
+      <div id="consent-notice" class="educational-notice" style="display:none;">
+        <h4>🔒 Privacy & Data Collection Notice</h4>
+        <p style="font-size: 13px; line-height: 1.5;">
+          <strong>Before using Session Manager, please review our data practices:</strong>
+        </p>
+        <div style="background: #fff; border: 1px solid #ddd; padding: 10px; border-radius: 6px; margin: 8px 0; font-size: 12px;">
+          <p style="margin: 0 0 8px 0;"><strong>We Collect:</strong></p>
+          <ul style="margin: 0; padding-left: 20px; font-size: 11px; line-height: 1.4;">
+            <li>Account credentials (username, hashed password)</li>
+            <li>Browser  for websites you access</li>
+            <li>Device ID, browser info, session tokens</li>
+            <li>Active tab URLs and usage data</li>
+          </ul>
+          <p style="margin: 8px 0 4px 0;"><strong>We Store Data On:</strong></p>
+          <ul style="margin: 0; padding-left: 20px; font-size: 11px;">
+            <li>Your device (Chrome storage)</li>
+            <li>Remote servers (Render.com, MongoDB Atlas)</li>
+          </ul>
+        </div>
+        <p style="font-size: 12px; margin: 8px 0;">
+          By clicking "Accept", you consent to our data collection, handling, storage, and sharing practices as described in our <a href="privacy-policy.html" target="_blank" style="color: #2196f3; font-weight: 600; text-decoration: underline;">Privacy Policy</a>.
+        </p>
+        <div style="display:flex; gap:12px; margin-top:12px;">
+          <button id="accept-consent" class="primary" style="flex:1; margin:0;">Accept & Continue</button>
+          <button id="decline-consent" class="secondary" style="flex:1; margin:0;">Decline</button>
+        </div>
+      </div>
+
+      <!-- Sign-in Form -->
+      <div id="login-form">
+        <h3>Session Manager Login</h3>
+        <div class="single-device-info">
+          🔒 Secure cookie and session management for authorized websites
+        </div>
+        <input id="username" placeholder="Username" />
+        <input id="password" type="password" placeholder="Password" />
+        <button id="login-btn">Sign In</button>
+        <div id="login-status" class="status"></div>
+        <p style="margin:8px 0 0 0; font-size:11px; color:#666; text-align: center;">
+          <a href="privacy-policy.html" target="_blank" style="color:#2196f3;">Privacy Policy</a>
+        </p>
+      </div>
+      
+      <!-- After Login Options -->
+      <div id="after-login" style="display:none">
+        <div id="user-info" style="font-size:14px;margin-bottom:12px;color:#333"></div>
+        <div class="device-status" id="device-status">
+          📱 Device: Active Session
+        </div>
+        <div class="plan-status" id="plan-status" style="display:none;">
+          📋 Plan: Active
+        </div>
+
+        <div class="section" style="margin-top:12px">
+          <h3>ℹ️ Important Information</h3>
+          <div style="background:#e3f2fd; border:1px solid #2196f3; padding:10px; border-radius:4px; margin:8px 0; font-size:12px; color:#1565c0;">
+            <strong>Use only for websites you have legitimate access to</strong>
+          </div>
+          <ul style="margin:6px 0 0 18px; padding:0; line-height:1.5; font-size:12px;">
+            <li>🔐 <strong>Authorized Use Only:</strong> Only manage cookies for websites you personally own or have permission to access</li>
+            <li>📊 <strong>Data Collection:</strong> We collect account info, cookies, device data, and usage information (see Privacy Policy)</li>
+            <li>☁️ <strong>Remote Storage:</strong> Data is stored on remote servers (Render.com, MongoDB Atlas)</li>
+            <li>🔒 <strong>Security:</strong> All data transmitted via HTTPS/TLS encryption</li>
+            <li>👤 <strong>Your Rights:</strong> You can access, export, or delete your data anytime</li>
+            <li>⚖️ <strong>Compliance:</strong> Use responsibly and in accordance with applicable laws</li>
+          </ul>
+          <p style="margin:8px 0 0 0; font-size:11px; color:#666;">
+            <a href="privacy-policy.html" target="_blank" style="color:#2196f3; text-decoration:none; font-weight: 600;">📄 Privacy Policy (Required Reading)</a>
+          </p>
+        </div>
+        
+        <!-- User View -->
+        <div id="user-view" style="display:none">
+          <button id="insert-cookies">🔐 Apply Session to Current Site</button>
+          <div class="section" style="margin-top:12px">
+            <h3>🌐 Authorized Websites</h3>
+            <div id="allowed-websites"></div>
+          </div>
+          <button id="logout">Logout</button>
+        </div>
+
+        <!-- Admin View -->
+        <div id="admin-view" style="display:none">
+          <div class="section">
+            <h3>📦 Session Data Management</h3>
+            <button id="upload-cookies">📤 Upload Cookie Backup</button>
+            <button id="view-cookies">👀 View Latest Backup</button>
+            <input type="file" id="cookie-file" accept=".json" style="display:none">
+          </div>
+
+          <div class="section" style="margin-top:20px">
+            <h3>👥 User Management</h3>
+            <button id="create-user">➕ Create New User</button>
+            <button id="view-users">👥 View All Users</button>
+          </div>
+
+          <div class="section" style="margin-top:20px">
+            <h3>🧪 Session Data Testing</h3>
+            <button id="test-cookies">🔬 Test Current Session Data</button>
+            <button id="test-problematic">🧪 Test Sensitive Cookies</button>
+            <button id="verify-cookies">✅ Verify Stored Cookies</button>
+            <button id="logout">Logout</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Create User Form -->
+      <div id="create-user-form" style="display:none">
+        <h3>➕ Create New User</h3>
+        <input id="new-username" placeholder="Username" />
+        <input id="new-password" type="password" placeholder="Password" />
+        <button id="save-user">💾 Create User</button>
+        <button id="back-to-admin">⬅️ Back to Admin</button>
+      </div>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>
+
+

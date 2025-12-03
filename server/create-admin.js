@@ -9,6 +9,7 @@ const MONGODB_URI = process.env.MONGODB_URI;
 // Admin credentials
 const adminUser = {
     username: "Yash95",
+    email: "yash95@swami-tools.local",
     password: "123456", // Make sure to use this exact password
     isAdmin: true
 };
@@ -29,6 +30,7 @@ async function createAdmin() {
         const passwordHash = await bcrypt.hash(adminUser.password, 10);
         const user = await User.create({
             username: adminUser.username,
+            email: adminUser.email.toLowerCase(),
             passwordHash,
             isAdmin: adminUser.isAdmin
         });

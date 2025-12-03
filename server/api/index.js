@@ -384,8 +384,8 @@ export default async function handler(req, res) {
       return res.status(200).end();
     }
 
-    // For now, skip database connection to fix CORS issues
-    // TODO: Add database connection back when MONGODB_URI is properly configured
+    // Ensure database connection is established before handling the request
+    await connectToDatabase();
     return app(req, res);
   } catch (error) {
     console.error('❌ Handler error:', error);
